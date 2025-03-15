@@ -18,9 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning={true}>
         <body>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+            <section className = "flex items-center justify-between">
             <section className="mx-6 my-5">
               <ModeToggle />
             </section>
@@ -40,6 +41,7 @@ export default function RootLayout({
                 <UserButton />
               </section>
             </SignedIn>
+            </section>
 
             {children}
           </ThemeProvider>
