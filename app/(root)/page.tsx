@@ -1,3 +1,5 @@
+import { randomInt } from "crypto";
+
 export default function Home() {
   return (
     <div className="text-4xl h-full flex justify-center items-center">
