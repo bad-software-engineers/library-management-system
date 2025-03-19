@@ -4,7 +4,7 @@ import React from 'react'
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
-const BookOverview = ({title, author, genre, rating, total_copies, available_copies, description, color, cover, summary} : Book) => {
+const BookOverview = ({title, author, genre, rating, total_copies, available_copies, description, cover} : Book) => {
   return (
     <section className="flex flex-col-reverse items-center justify-around gap-12 sm:gap-32 xl:flex-row xl:gap-8 mx-10 my-10 w-full">
       <div className="flex flex-col gap-5">
