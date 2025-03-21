@@ -1,19 +1,18 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import { usersTable } from "@/db/schema";
+import { verifyPending } from "@/db/schema";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
 async function main(userId: string, email: string) {
-  const user: typeof usersTable.$inferInsert = {
-    name: userId,
-    age: 30,
+  const user: typeof verifyPending.$inferInsert = {
+    clerkId: userId,
     email: email,
   };
 
   try {
-    await db.insert(usersTable).values(user);
+    await db.insert(verifyPending).values(user);
     console.log("New user created!");
     return "Done";
   } catch (error: any) {
