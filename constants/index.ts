@@ -7,11 +7,126 @@ export const sampleBooks = [
         rating: 4.5,
         total_copies: 10,
         available_copies: 5,
-        description: "A dazzling novel about all the choices that go into a life well lived, from the internationally bestselling author of Reasons to Stay Alive and How To Stop Time.",
+        description: "A dazzling novel about all the choices that go into a life well lived.",
         color: "#FFD700",
         cover: "10.jpg",
-        summary: "Somewhere out beyond the edge of the universe there is a library that contains an infinite number of books, each one the story of another reality. One tells the story of your life as it is, along with another book for the other life you could have lived if you had made a different choice at any point in your life. While we all wonder how our lives might have been, what if you had the chance to go to the library and see for yourself? Would any of these other lives truly be better?"
-
+        summary: "A library that contains books of different possible lives one could have lived."
     },
-]
-
+    {
+        id: 2,
+        title: "Atomic Habits",
+        author: "James Clear",
+        genre: "Self-Help",
+        rating: 4.8,
+        total_copies: 15,
+        available_copies: 7,
+        description: "A practical guide on how small habits make a big difference.",
+        color: "#FF5733",
+        cover: "12.jpg",
+        summary: "Learn how to build good habits, break bad ones, and master your daily routines."
+    },
+    {
+        id: 3,
+        title: "The Alchemist",
+        author: "Paulo Coelho",
+        genre: "Adventure",
+        rating: 4.7,
+        total_copies: 12,
+        available_copies: 6,
+        description: "A journey of self-discovery and following one's dreams.",
+        color: "#34A853",
+        cover: "3.jpg",
+        summary: "Santiago, a shepherd, follows his dream of finding a treasure."
+    },
+    {
+        id: 4,
+        title: "Rich Dad Poor Dad",
+        author: "Robert Kiyosaki",
+        genre: "Finance",
+        rating: 4.6,
+        total_copies: 8,
+        available_copies: 3,
+        description: "Financial literacy explained through the contrast of two father figures.",
+        color: "#4285F4",
+        cover: "4.jpg",
+        summary: "A book that teaches financial independence and investing."
+    },
+    {
+        id: 5,
+        title: "The Psychology of Money",
+        author: "Morgan Housel",
+        genre: "Finance",
+        rating: 4.9,
+        total_copies: 9,
+        available_copies: 4,
+        description: "Exploring the emotional and psychological side of financial decisions.",
+        color: "#9B59B6",
+        cover: "5.jpg",
+        summary: "How people think about money and how it affects their decisions."
+    },
+    {
+        id: 6,
+        title: "1984",
+        author: "George Orwell",
+        genre: "Dystopian",
+        rating: 4.7,
+        total_copies: 10,
+        available_copies: 5,
+        description: "A chilling depiction of a totalitarian regime.",
+        color: "#E74C3C",
+        cover: "6.jpg",
+        summary: "A man fights against the omnipresent surveillance of Big Brother."
+    },
+    {
+        id: 7,
+        title: "To Kill a Mockingbird",
+        author: "Harper Lee",
+        genre: "Classic",
+        rating: 4.8,
+        total_copies: 14,
+        available_copies: 6,
+        description: "A powerful story about racism and justice in the Deep South.",
+        color: "#F39C12",
+        cover: "7.jpg",
+        summary: "Scout Finch recounts her childhood growing up in a racially charged society."
+    },
+    {
+        id: 8,
+        title: "Sapiens: A Brief History of Humankind",
+        author: "Yuval Noah Harari",
+        genre: "History",
+        rating: 4.9,
+        total_copies: 10,
+        available_copies: 4,
+        description: "A thought-provoking book on the history of humankind.",
+        color: "#16A085",
+        cover: "8.jpg",
+        summary: "A detailed look into the evolution and impact of Homo sapiens."
+    },
+    {
+        id: 9,
+        title: "The Subtle Art of Not Giving a F*ck",
+        author: "Mark Manson",
+        genre: "Self-Help",
+        rating: 4.5,
+        total_copies: 11,
+        available_copies: 5,
+        description: "A counterintuitive approach to living a good life.",
+        color: "#C0392B",
+        cover: "9.jpg",
+        summary: "Teaches the art of prioritizing what truly matters in life."
+    },
+    {
+        id: 10,
+        title: "Dune",
+        author: "Frank Herbert",
+        genre: "Science Fiction",
+        rating: 4.8,
+        total_copies: 12,
+        available_copies: 6,
+        description: "A sci-fi epic about politics, religion, and power.",
+        color: "#8E44AD",
+        cover: "10.jpg",
+        summary: "Paul Atreides rises to power on the desert planet of Arrakis."
+    }
+];
