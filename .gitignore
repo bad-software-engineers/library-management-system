@@ -1,3 +1,6 @@
+/db/seed.ts
+books.js
+drizzle-seed.config.ts
 
 # dependencies
 /node_modules
