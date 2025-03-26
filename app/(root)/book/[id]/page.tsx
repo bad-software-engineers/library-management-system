@@ -4,9 +4,11 @@ import BookOverview from "@/components/ui/BookOverview";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 const Page = ({ params }: any) => {
-  const bookId = Number(params.id);
+  const { id }: any = React.use(params);
+  const bookId = Number(id);
 
   const bookDetails = sampleBooks.find((book) => book.id === bookId);
 
