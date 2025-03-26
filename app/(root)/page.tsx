@@ -4,6 +4,7 @@ import BookOverview from "@/components/ui/BookOverview";
 import SearchBar from "@/components/ui/searchBar";
 import { sampleBooks } from "@/constants";
 import Link from "next/link";
+import mail from "@/lib/mail";
 
 export default function Home() {
   return (
@@ -23,6 +24,5 @@ export default function Home() {
           ))}
         </div>
     </div>
-);
+  );
 }
-
