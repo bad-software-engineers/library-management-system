@@ -2,6 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { verifyPending } from "@/db/schema";
+import mail from "@/lib/mail";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -42,6 +43,8 @@ const page = async () => {
   }
 
   const requested = await main(id, primaryEmail);
+
+  mail(primaryEmail, `Hello ${primaryEmail}`);
 
   return (
     <div className="flex w-full h-full justify-center items-center">
