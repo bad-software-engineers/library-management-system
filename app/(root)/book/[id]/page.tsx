@@ -1,13 +1,13 @@
 "use client";
-import { use } from "react";
 import { sampleBooks } from "@/constants/index";
 import BookOverview from "@/components/ui/BookOverview";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import React from "react";
 
 const Page = ({ params }: any) => {
-  const { id }: any = use(params);
+  const { id }: any = React.use(params);
   const bookId = Number(id);
 
   const bookDetails = sampleBooks.find((book) => book.id === bookId);
