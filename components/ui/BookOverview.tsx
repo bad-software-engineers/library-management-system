@@ -1,11 +1,11 @@
-import { IKImage, ImageKitProvider } from 'imagekitio-next'
-import Image from 'next/image';
-import React from 'react'
+import { IKImage, ImageKitProvider } from "imagekitio-next";
+import Image from "next/image";
+import React from "react";
 
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
-const BookOverview = ({title, author, genre, rating, total_copies, available_copies, description, cover} : Book) => {
+const BookOverview = ({ title, author, genre, rating, total_copies, available_copies, description, cover }: Book) => {
   return (
     <section className="flex flex-col-reverse items-center justify-around gap-12 sm:gap-32 xl:flex-row xl:gap-8 mx-10 my-10 w-full">
       <div className="flex flex-col gap-5">
@@ -32,28 +32,23 @@ const BookOverview = ({title, author, genre, rating, total_copies, available_cop
           </p>
 
           <p className="text-xl text-light-100">
-            Available Books 
-            <span className="ml-2 font-semibold text-[#EED1AC]">
-              {available_copies}
-            </span>
+            Available Books
+            <span className="ml-2 font-semibold text-[#EED1AC]">{available_copies}</span>
           </p>
         </div>
 
-        <p className="mt-2 text-justify text-xl text-light-100 max-w-[600px]">
-          {description}
-        </p>
+        <p className="mt-2 text-justify text-xl text-light-100 max-w-[600px]">{description}</p>
       </div>
 
       <div className="relative flex bg-white justify-center">
         <div className="relative">
           <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint}>
-            <IKImage path={cover} alt="Book"/>
+            <IKImage path={cover} alt="Book" width={300} height={400} />
           </ImageKitProvider>
         </div>
       </div>
-
     </section>
-  )
-}
+  );
+};
 
-export default BookOverview
+export default BookOverview;
