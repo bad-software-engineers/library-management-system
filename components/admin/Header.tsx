@@ -1,20 +1,39 @@
-import { auth } from '@clerk/nextjs/server'
+import {  currentUser  } from '@clerk/nextjs/server'
+import {ClerkProvider, UserButton} from "@clerk/nextjs";
 
 const Header = async () => {
-    const { userId } = await auth()
+    const user = await currentUser()
+
+    if (!user) return <div>Not signed in</div>
+
+    // const primaryEmailAddress = user.emailAddresses.filter((email) => email.id === user.primaryEmailAddressId);
 
   return (
-    <header>
-        <div>
-            <h2 className="text-2xl font-bold text-grey-400">
-                Welcome, {userId}
+      <ClerkProvider
+          appearance={{
+              variables: {
+
+              },
+          }}
+      >
+
+    <header className="flex w-full bg-white justify-between px-5 rounded-xl">
+        <div className=" py-2 px-4">
+            <h2 className="text-2xl font-bold text-grey-400 ">
+                Welcome, {user.fullName}
             </h2>
+            {/*<p>{primaryEmailAddress[0].emailAddress}</p>*/}
             <p className="text-xl text-grey-400">
                 Monitor all of your users and books here
             </p>
         </div>
+        <div className="flex justify-center items-center">
+            <UserButton/>
+        </div>
     </header>
+      </ClerkProvider>
+
   )
 }
 
-export default Header
+export default Header;
