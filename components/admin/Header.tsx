@@ -27,7 +27,7 @@ const Header = async () => {
                 Monitor all of your users and books here
             </p>
         </div>
-        <div className="flex justify-center items-center">
+        <div className="scale-150 flex justify-center items-center pr-4">
             <UserButton/>
         </div>
     </header>
