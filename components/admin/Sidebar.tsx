@@ -19,7 +19,7 @@ import {
     },
     {
       img: Home,
-      route: "/admin/users",
+      route: "/admin/allusers",
       text: "All Users",
     },
     {
