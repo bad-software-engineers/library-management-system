@@ -8,7 +8,7 @@ export default async function AdminDashboard() {
   }
   return(
     // <ImageUpload/>
-    <div className="bg-white my-5 p-2 ">
+    <div className="text-2xl font-bold mb-6 p-6">
       <h1>Admin Dashboard</h1>
     </div>
   );

@@ -1,5 +1,6 @@
 import {  currentUser  } from '@clerk/nextjs/server'
 import {ClerkProvider, UserButton} from "@clerk/nextjs";
+import Link from 'next/link';
 
 const Header = async () => {
     const user = await currentUser()
@@ -27,9 +28,18 @@ const Header = async () => {
                 Monitor all of your users and books here
             </p>
         </div>
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center gap-5 pr-4">
+          <Link href="/">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition">
+              Go to User Dashboard
+            </button>
+          </Link>
+
+          <div className="scale-125 flex items-center justify-center">
             <UserButton/>
+          </div>
         </div>
+
     </header>
       </ClerkProvider>
 

@@ -7,6 +7,7 @@ import { ModeToggle } from "@/components/ui/dark-toggle";
 import Link from "next/link";
 import { dark } from "@clerk/themes";
 import { unstable_ViewTransition as ViewTransition } from "react";
+import HeaderWithUserInfo from "@/components/ui/HeaderWithUserInfo";
 
 export const metadata: Metadata = {
   title: "LMS",
@@ -37,28 +38,7 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning={true}>
           <body cz-shortcut-listen="true">
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              <section className="flex items-center justify-between">
-                <section className="mx-6 my-5">
-                  <ModeToggle />
-                </section>
-                <SignedOut>
-                  <section className="flex gap-x-3 mx-4 my-3">
-                    <Link href={"/sign-in"}>
-                      <Button size={"lg"}>Sign In</Button>
-                    </Link>
-
-                    <Link href={"/sign-up"}>
-                      <Button size={"lg"}>Sign Up</Button>
-                    </Link>
-                  </section>
-                </SignedOut>
-                <SignedIn>
-                  <section className="mx-6 my-4">
-                    <UserButton />
-                  </section>
-                </SignedIn>
-              </section>
-
+              <HeaderWithUserInfo/>
               {children}
             </ThemeProvider>
           </body>
