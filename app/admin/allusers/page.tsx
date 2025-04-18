@@ -25,7 +25,14 @@ const Page = () => {
   // Function to fetch users
   const getUsers = async () => {
     const fetchedUsers = await fetchUsers();  // Call the server function
-    setUsers(fetchedUsers);  // Update the state with fetched data
+
+    const sortedUsers = fetchedUsers.sort((a: any, b: any) => {
+      const roleA = a.role || "user";
+      const roleB = b.role || "user";
+      return roleA === "admin" && roleB !== "admin" ? -1 : roleA !== "admin" && roleB === "admin" ? 1 : 0;
+    });
+
+    setUsers(sortedUsers);  // Update the state with fetched data
   };
 
   // Fetch users on component mount
@@ -41,7 +48,7 @@ const Page = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">All Users</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">All Users</h1>
 
       <Table>
         <TableHeader>
