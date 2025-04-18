@@ -41,7 +41,7 @@ const Page = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">All Users</h1>
+      <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">All Users</h1>
 
       <Table>
         <TableHeader>
