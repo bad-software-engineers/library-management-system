@@ -5,21 +5,6 @@ import { eq } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-// async function main() {
-//   const user: typeof verifyPending.$inferInsert = {
-//     clerkId: "Dishant",
-//     email: "dishant@example.com",
-//   };
-
-//   // Insert User
-//   await db.insert(verifyPending).values(user);
-//   console.log("New user created!");
-
-//   // Retrieve Users
-//   const users = await db.select().from(verifyPending);
-//   console.log("Getting all users from the database: ", users);
-// }
-
 export const createUsers = async (clerkId: string, primaryEmail: string, universityId: string) => {
   const user: typeof users.$inferInsert = {
     clerkId,
@@ -39,6 +24,8 @@ export const readUsers = async () => {
   try {
     const res = await db.select().from(users);
     console.log("readUsers:", res);
+
+    return res;
   } catch (error) {
     console.log("Something Went Wrong :", error);
   }

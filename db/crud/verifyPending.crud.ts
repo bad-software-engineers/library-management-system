@@ -23,6 +23,8 @@ export const readVerifyPending = async () => {
   const data = await db.select().from(verifyPending);
 
   console.log("read verifyPending: ", data);
+
+  return data;
 };
 
 export const updateVerifyPending = async (clerkId: string, newclerkId: string, newEmail: string) => {
