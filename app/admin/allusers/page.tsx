@@ -2,21 +2,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchUsers, changeRole } from "./server";  // import server-side logic
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { fetchUsers, changeRole } from "./server"; // import server-side logic
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
 const Page = () => {
@@ -24,7 +12,7 @@ const Page = () => {
 
   // Function to fetch users
   const getUsers = async () => {
-    const fetchedUsers = await fetchUsers();  // Call the server function
+    const fetchedUsers = await fetchUsers(); // Call the server function
 
     const sortedUsers = fetchedUsers.sort((a: any, b: any) => {
       const roleA = a.role || "user";
@@ -32,18 +20,18 @@ const Page = () => {
       return roleA === "admin" && roleB !== "admin" ? -1 : roleA !== "admin" && roleB === "admin" ? 1 : 0;
     });
 
-    setUsers(sortedUsers);  // Update the state with fetched data
+    setUsers(sortedUsers); // Update the state with fetched data
   };
 
   // Fetch users on component mount
   useEffect(() => {
     getUsers();
-  }, []);  // Empty dependency array means it runs only once when the component mounts
+  }, []); // Empty dependency array means it runs only once when the component mounts
 
   // Handle role change and refetch updated users
   const handleRoleChange = async (userId: string, newRole: string) => {
-    await changeRole(userId, newRole);  // Call the server function to change role
-    getUsers();  // Refetch the users after role change
+    await changeRole(userId, newRole); // Call the server function to change role
+    getUsers(); // Refetch the users after role change
   };
 
   return (
@@ -68,11 +56,7 @@ const Page = () => {
             return (
               <TableRow key={user.id}>
                 <TableCell>
-                  <img
-                    src={user.imageUrl}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
+                  <img src={user.imageUrl} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                 </TableCell>
                 <TableCell>{user.firstName || "-"}</TableCell>
                 <TableCell>{user.lastName || "-"}</TableCell>
@@ -80,23 +64,24 @@ const Page = () => {
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px]">
-                        {String(role)}
-                      </Button>
+                      {role === "user" ? (
+                        <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] ">
+                          {String(role)}
+                        </Button>
+                      ) : (
+                        <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] bg-green-300/80">
+                          {String(role)}
+                        </Button>
+                      )}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {["user", "admin"].map((r) => (
-                        <form action={changeRole.bind(null, user.id, r)} key={r}>
+                        <form action={handleRoleChange.bind(null, user.id, r)} key={r}>
                           <DropdownMenuItem asChild>
-                          <button
-                            type="submit"
-                            className={`w-full text-left ${
-                              r === role ? "font-semibold text-blue-500" : ""
-                            }`}
-                          >
-                            {r.charAt(0).toUpperCase() + r.slice(1)}
-                          </button>
-                        </DropdownMenuItem>
+                            <button type="submit" className={`w-full text-left ${r === role ? "font-semibold text-blue-500" : ""}`}>
+                              {r.charAt(0).toUpperCase() + r.slice(1)}
+                            </button>
+                          </DropdownMenuItem>
                         </form>
                       ))}
                     </DropdownMenuContent>
