@@ -51,5 +51,3 @@ export const deleteTransactions = async (tid: number) => {
     console.log("Something Went Wrong :", error);
   }
 };
-
-readTransactions();

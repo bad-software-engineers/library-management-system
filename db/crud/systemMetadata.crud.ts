@@ -23,5 +23,3 @@ export const updateSystemMetadata = async (maxBooks: number, maxDays: number) =>
     console.log("Something Went Wrong :", error);
   }
 };
-
-readSystemMetadata();
