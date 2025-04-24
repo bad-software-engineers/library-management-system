@@ -3,14 +3,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { verifyPending } from "../schema";
 import { eq } from "drizzle-orm";
 
-// You can either load from `.env` or use a hardcoded URL like you have
-const databaseUrl ="postgresql://library-management-system_owner:npg_OEQAg7KSW2Gu@ep-ancient-heart-a1yazye1-pooler.ap-southeast-1.aws.neon.tech/library-management-system?sslmode=require";
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL environment variable is not defined");
-}
-
-const db = drizzle(databaseUrl);
+const db = drizzle(process.env.DATABASE_URL!);
 
 // Function to create a pending user
 export const createVerifyPending = async (clerkId: string, email: string) => {
