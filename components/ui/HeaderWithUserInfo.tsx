@@ -1,17 +1,42 @@
 "use client";
 
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ModeToggle } from "@/components/ui/dark-toggle";
+import { toast } from "sonner";
 
 export default function HeaderWithUserInfo() {
   const { user } = useUser();
+  const pathname = usePathname();
 
   return (
     <section className="flex items-center justify-between">
-      <section className="mx-6 my-5">
+      <section className="mx-6 my-5 flex gap-x-3 items-center justify-center">
         <ModeToggle />
+        {pathname !== "/get-verified" && user ? (
+          !user?.publicMetadata?.verificationStatus ? (
+            <Link href={"/get-verified"}>
+              <Button size={"lg"}>Get Verified</Button>
+            </Link>
+          ) : user.publicMetadata?.verificationStatus === "requested" ? (
+            <Button
+              size="lg"
+              onClick={() =>
+                toast.info("You've already requested verification.")
+              }
+            >
+              Verification Requested
+            </Button>
+          ) : null
+        ) : (
+          <SignedIn>
+          {/* <Link href={"/"}> */}
+            <Button size={"lg"} onClick={() => (window.location.href = "/")}>Go Back</Button>
+          {/* </Link> */}
+        </SignedIn>
+        )}
       </section>
 
       <SignedOut>

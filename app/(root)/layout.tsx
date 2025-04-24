@@ -8,6 +8,7 @@ import Link from "next/link";
 import { dark } from "@clerk/themes";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import HeaderWithUserInfo from "@/components/ui/HeaderWithUserInfo";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "LMS",
@@ -40,6 +41,7 @@ export default function RootLayout({
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
               <HeaderWithUserInfo/>
               {children}
+              <Toaster richColors position="bottom-right" />
             </ThemeProvider>
           </body>
         </html>
