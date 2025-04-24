@@ -8,7 +8,7 @@ import Link from "next/link";
 import { dark } from "@clerk/themes";
 import { unstable_ViewTransition as ViewTransition } from "react";
 import HeaderWithUserInfo from "@/components/ui/HeaderWithUserInfo";
-import { Toaster } from "sonner";
+// import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "LMS",
@@ -39,9 +39,9 @@ export default function RootLayout({
         <html lang="en" suppressHydrationWarning={true}>
           <body cz-shortcut-listen="true">
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-              <HeaderWithUserInfo/>
+              <HeaderWithUserInfo />
               {children}
-              <Toaster richColors position="bottom-right" />
+              {/* <Toaster richColors position="bottom-right" /> */}
             </ThemeProvider>
           </body>
         </html>
