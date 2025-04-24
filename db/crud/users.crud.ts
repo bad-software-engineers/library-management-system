@@ -8,8 +8,7 @@ const db = drizzle(process.env.DATABASE_URL!);
 export const createUsers = async (clerkId: string, primaryEmail: string, universityId: string) => {
   const user: typeof users.$inferInsert = {
     clerkId,
-    primaryEmail,
-    universityId,
+    primaryEmail
   };
 
   try {
@@ -33,8 +32,8 @@ export const readUsers = async () => {
 
 export const updateUsers = async (clerkId: string, newUniversityId: string) => {
   try {
-    const res = await db.update(users).set({ universityId: newUniversityId }).where(eq(users.clerkId, clerkId));
-    console.log("updateUsers:", res);
+    // const res = await db.update(users).set({ universityId: newUniversityId }).where(eq(users.clerkId, clerkId));
+    // console.log("updateUsers:", res);
   } catch (error) {
     console.log("Something Went Wrong :", error);
   }
@@ -47,4 +46,9 @@ export const deleteUsers = async (clerkId: string) => {
   } catch (error) {
     console.log("Something Went Wrong :", error);
   }
+};
+
+export const getUserCount = async () => {
+  const result = await db.select().from(users);
+  return result.length;
 };

@@ -1,8 +1,7 @@
-// app/admin/allusers/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchUsers, changeRole } from "./server"; // import server-side logic
+import { fetchUsers, changeRole, getUsersWithClerk } from "./server"; // import server-side logic
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
@@ -12,8 +11,8 @@ const Page = () => {
 
   // Function to fetch users
   const getUsers = async () => {
-    const fetchedUsers = await fetchUsers(); // Call the server function
-
+    const fetchedUsers = await getUsersWithClerk(); // Call the server function
+    console.log("Fetched Users:", fetchedUsers); // Log the fetched users for debugging
     const sortedUsers = fetchedUsers.sort((a: any, b: any) => {
       const roleA = a.role || "user";
       const roleB = b.role || "user";
@@ -42,8 +41,7 @@ const Page = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Profile</TableHead>
-            <TableHead>First Name</TableHead>
-            <TableHead>Last Name</TableHead>
+            <TableHead>Full Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
           </TableRow>
@@ -56,33 +54,35 @@ const Page = () => {
             return (
               <TableRow key={user.id}>
                 <TableCell>
-                  <img src={user.imageUrl} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                  <img src={user.profile} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                 </TableCell>
-                <TableCell>{user.firstName || "-"}</TableCell>
-                <TableCell>{user.lastName || "-"}</TableCell>
+                <TableCell>{user.fullName || "-"}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      {role === "user" ? (
-                        <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] ">
-                          {String(role)}
-                        </Button>
-                      ) : (
+                      {role === "admin" ? (
                         <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] bg-green-300/80">
+                        {String(role)}
+                      </Button>
+                        
+                      ) : (
+                        <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] ">
                           {String(role)}
                         </Button>
                       )}
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {["user", "admin"].map((r) => (
-                        <form action={handleRoleChange.bind(null, user.id, r)} key={r}>
-                          <DropdownMenuItem asChild>
-                            <button type="submit" className={`w-full text-left ${r === role ? "font-semibold text-blue-500" : ""}`}>
-                              {r.charAt(0).toUpperCase() + r.slice(1)}
-                            </button>
-                          </DropdownMenuItem>
-                        </form>
+                        <DropdownMenuItem asChild key={r}>
+                          <button
+                            type="button" // Use button instead of form
+                            className={`w-full text-left ${r === role ? "font-semibold text-blue-500" : ""}`}
+                            onClick={() => handleRoleChange(user.id, r)} // Directly handle role change
+                          >
+                            {r.charAt(0).toUpperCase() + r.slice(1)}
+                          </button>
+                        </DropdownMenuItem>
                       ))}
                     </DropdownMenuContent>
                   </DropdownMenu>
