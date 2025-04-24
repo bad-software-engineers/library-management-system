@@ -3,7 +3,7 @@ import BookCard from "@/components/ui/BookCard";
 import SearchBar from "@/components/ui/searchBar";
 import { sampleBooks } from "@/constants";
 import Link from "next/link";
-
+import ImageUpload from "@/components/ui/BookUpload";
 export default function Home() {
   return (
     <div className=" h-full flex flex-col items-center w-full">
@@ -21,6 +21,7 @@ export default function Home() {
           </Link>
         ))}
       </div>
+      <ImageUpload />
     </div>
   );
 }
