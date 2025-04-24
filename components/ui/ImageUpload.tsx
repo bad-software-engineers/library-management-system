@@ -1,5 +1,6 @@
-import { ImageKitProvider, IKUpload } from "imagekitio-next";
+import { ImageKitProvider, IKUpload, IKImage } from "imagekitio-next";
 import { UploadError } from "imagekitio-next/dist/types/components/IKUpload/props";
+import { useState } from "react";
 
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
@@ -27,20 +28,26 @@ const authenticator = async () => {
     }
   }
 };
-const onError = (err: UploadError) => {
-  console.log("Error", err);
-};
-
-const onSuccess = (res: { filePath: string }) => {
-  const path = res.filePath;
-  console.log(path);
-};
 
 const ImageUpload = () => {
+  const [image, setImage] = useState("");
+
+  const onSuccess = (res: { filePath: string }) => {
+    console.log(res);
+    const path = res.filePath;
+    console.log(path);
+    setImage(path);
+  };
+
+  const onError = (err: UploadError) => {
+    console.log("Error", err);
+  };
+
   return (
     <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
       <div>
         <IKUpload fileName="test-upload.png" onError={onError} onSuccess={onSuccess} />
+        {image !== "" ? <IKImage path={image} height={200} width={150} alt="Book" /> : null}
       </div>
     </ImageKitProvider>
   );
