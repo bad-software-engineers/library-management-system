@@ -5,11 +5,20 @@ import { eq } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export const createBooks = async (title: string, author: string, genre: string, totalCopies: number, availableCopies: number, cover: string) => {
+export const createBooks = async (
+  title: string,
+  author: string,
+  genre: string,
+  isbn: string,
+  totalCopies: number,
+  availableCopies: number,
+  cover: string
+) => {
   const book: typeof books.$inferInsert = {
     title,
     author,
     genre,
+    isbn,
     totalCopies,
     availableCopies,
     cover,

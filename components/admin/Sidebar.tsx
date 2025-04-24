@@ -24,7 +24,7 @@ import {
     },
     {
       img: Home,
-      route: "/admin/books",
+      route: "/admin/allbooks",
       text: "All Books",
     },
     {
