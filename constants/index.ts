@@ -10,7 +10,8 @@ export const sampleBooks = [
         description: "A dazzling novel about all the choices that go into a life well lived.",
         color: "#FFD700",
         cover: "10.jpg",
-        summary: "A library that contains books of different possible lives one could have lived."
+        summary: "A library that contains books of different possible lives one could have lived.",
+        isbn: "9780525559474"
     },
     {
         id: 2,
@@ -23,7 +24,8 @@ export const sampleBooks = [
         description: "A practical guide on how small habits make a big difference.",
         color: "#FF5733",
         cover: "12.jpg",
-        summary: "Learn how to build good habits, break bad ones, and master your daily routines."
+        summary: "Learn how to build good habits, break bad ones, and master your daily routines.",
+        isbn: "9780735211292"
     },
     {
         id: 3,
@@ -36,7 +38,8 @@ export const sampleBooks = [
         description: "A journey of self-discovery and following one's dreams.",
         color: "#34A853",
         cover: "3.jpg",
-        summary: "Santiago, a shepherd, follows his dream of finding a treasure."
+        summary: "Santiago, a shepherd, follows his dream of finding a treasure.",
+        isbn: "9780062315007"
     },
     {
         id: 4,
@@ -49,7 +52,8 @@ export const sampleBooks = [
         description: "Financial literacy explained through the contrast of two father figures.",
         color: "#4285F4",
         cover: "4.jpg",
-        summary: "A book that teaches financial independence and investing."
+        summary: "A book that teaches financial independence and investing.",
+        isbn: "9781612680194"
     },
     {
         id: 5,
@@ -62,7 +66,8 @@ export const sampleBooks = [
         description: "Exploring the emotional and psychological side of financial decisions.",
         color: "#9B59B6",
         cover: "5.jpg",
-        summary: "How people think about money and how it affects their decisions."
+        summary: "How people think about money and how it affects their decisions.",
+        isbn: "9780857197689"
     },
     {
         id: 6,
@@ -75,7 +80,8 @@ export const sampleBooks = [
         description: "A chilling depiction of a totalitarian regime.",
         color: "#E74C3C",
         cover: "6.jpg",
-        summary: "A man fights against the omnipresent surveillance of Big Brother."
+        summary: "A man fights against the omnipresent surveillance of Big Brother.",
+        isbn: "9780451524935"
     },
     {
         id: 7,
@@ -88,7 +94,8 @@ export const sampleBooks = [
         description: "A powerful story about racism and justice in the Deep South.",
         color: "#F39C12",
         cover: "7.jpg",
-        summary: "Scout Finch recounts her childhood growing up in a racially charged society."
+        summary: "Scout Finch recounts her childhood growing up in a racially charged society.",
+        isbn: "9780446310789"
     },
     {
         id: 8,
@@ -101,7 +108,8 @@ export const sampleBooks = [
         description: "A thought-provoking book on the history of humankind.",
         color: "#16A085",
         cover: "8.jpg",
-        summary: "A detailed look into the evolution and impact of Homo sapiens."
+        summary: "A detailed look into the evolution and impact of Homo sapiens.",
+        isbn: "9780062316097"
     },
     {
         id: 9,
@@ -114,7 +122,8 @@ export const sampleBooks = [
         description: "A counterintuitive approach to living a good life.",
         color: "#C0392B",
         cover: "9.jpg",
-        summary: "Teaches the art of prioritizing what truly matters in life."
+        summary: "Teaches the art of prioritizing what truly matters in life.",
+        isbn: "9780062457714"
     },
     {
         id: 10,
@@ -127,6 +136,7 @@ export const sampleBooks = [
         description: "A sci-fi epic about politics, religion, and power.",
         color: "#8E44AD",
         cover: "10.jpg",
-        summary: "Paul Atreides rises to power on the desert planet of Arrakis."
+        summary: "Paul Atreides rises to power on the desert planet of Arrakis.",
+        isbn: "9780441172719"
     }
 ];

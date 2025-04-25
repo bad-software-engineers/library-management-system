@@ -15,6 +15,7 @@ declare global {
     title: string;
     author: string;
     genre: string;
+    isbn: string;
     rating: number;
     total_copies: number;
     available_copies: number;
