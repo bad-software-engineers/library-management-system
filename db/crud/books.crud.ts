@@ -1,20 +1,13 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import { books } from "../schema";
+import { books } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export const createBooks = async (
-  title: string,
-  author: string,
-  genre: string,
-  isbn: string,
-  totalCopies: number,
-  availableCopies: number,
-  cover: string
-) => {
+export const createBooks = async (isbn: string, title: string, author: string, genre: string, totalCopies: number, availableCopies: number, cover: string) => {
   const book: typeof books.$inferInsert = {
+    isbn,
     title,
     author,
     genre,
@@ -59,5 +52,3 @@ export const deleteBooks = async (id: number) => {
     console.log("Something Went Wrong :", error);
   }
 };
-
-readBooks();

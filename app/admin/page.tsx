@@ -1,8 +1,8 @@
 // app/admin/dashboard.tsx
 import { checkRole } from "@/utils/roles";
 import { redirect } from "next/navigation";
-import { clerkClient } from '@clerk/nextjs/server';
-import { UserIcon, UsersIcon } from "@heroicons/react/24/solid";
+import { UsersIcon } from "@heroicons/react/24/solid";
+import { getUserCount } from "@/db/crud/users.crud";
 
 export default async function AdminDashboard() {
   const isAdmin = await checkRole("admin");
@@ -10,10 +10,7 @@ export default async function AdminDashboard() {
     redirect("/");
   }
 
-  // Fetch total number of users from Clerk's API
-  const client = await clerkClient();
-  const users = await client.users.getUserList();
-  const userCount = users.data.length;
+  const userCount = getUserCount();
 
   return (
     <div className="p-6">
@@ -27,18 +24,6 @@ export default async function AdminDashboard() {
             <div>
               <h2 className="text-2xl font-semibold">Total Users</h2>
               <p className="text-4xl font-bold">{userCount}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Other Stats Can Be Added Below */}
-        {/* Example Card: */}
-        <div className="bg-gradient-to-r from-green-500 to-teal-600 p-6 rounded-xl shadow-lg text-white">
-          <div className="flex items-center gap-4">
-            <UserIcon className="w-12 h-12 text-white" />
-            <div>
-              <h2 className="text-2xl font-semibold">New Sign-ups</h2>
-              <p className="text-4xl font-bold">XX</p> {/* Example number */}
             </div>
           </div>
         </div>
