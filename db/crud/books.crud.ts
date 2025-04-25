@@ -11,7 +11,6 @@ export const createBooks = async (isbn: string, title: string, author: string, g
     title,
     author,
     genre,
-    isbn,
     totalCopies,
     availableCopies,
     cover,
