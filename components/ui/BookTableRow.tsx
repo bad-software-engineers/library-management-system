@@ -3,6 +3,7 @@
 import { TableCell, TableRow } from "@/components/ui/table";
 import { BookCover } from "./BookCover";
 import { formatISBN } from "@/utils/validation";
+import { useRouter } from "next/navigation";
 
 interface Book {
   id: number;
@@ -16,8 +17,14 @@ interface Book {
 }
 
 export function BookTableRow({ book }: { book: Book }) {
+  const router = useRouter();
+
   return (
-    <TableRow key={book.id}>
+    <TableRow 
+      key={book.id} 
+      className="cursor-pointer hover:bg-gray-100"
+      onClick={() => router.push(`/book/${book.id}`)}
+    >
       <TableCell>
         <BookCover cover={book.cover} title={book.title} />
       </TableCell>
