@@ -3,7 +3,7 @@
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { BookTableRow } from "@/components/ui/BookTableRow";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import ImageUpload from "@/components/ui/BookUpload";
 import { Pagination } from "@/components/ui/pagination";
 import { useState } from "react";
@@ -30,6 +30,10 @@ export default function BooksTable({ initialBooks, totalPages, totalBooks, curre
   const [isOpen, setIsOpen] = useState(false);
   const pageSize = 10;
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-8">
@@ -39,13 +43,13 @@ export default function BooksTable({ initialBooks, totalPages, totalBooks, curre
             Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, totalBooks)} of {totalBooks} books
           </p>
         </div>
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
           <DialogTrigger asChild>
             <Button>Add New Book</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px]">
             <DialogHeader>
-              <DialogTitle>Add New Book</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">Add New Book</DialogTitle>
             </DialogHeader>
             <ImageUpload onSuccess={() => setIsOpen(false)} />
           </DialogContent>

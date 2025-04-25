@@ -51,7 +51,9 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
     if (name === 'isbn') {
       // Remove any non-digit characters except 'X' for ISBN-10
       const cleanValue = value.replace(/[^0-9X]/gi, '');
-      setFormData(prev => ({ ...prev, [name]: cleanValue }));
+      // Limit to 13 characters
+      const truncatedValue = cleanValue.slice(0, 13);
+      setFormData(prev => ({ ...prev, [name]: truncatedValue }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
@@ -67,19 +69,6 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
         return;
       }
 
-      if (!validateISBN(formData.isbn)) {
-        toast.error("Please enter a valid ISBN (10 or 13 digits).");
-        return;
-      }
-
-      console.log("Submitting book data:", {
-        ...formData,
-        totalCopies: parseInt(formData.totalCopies),
-        availableCopies: parseInt(formData.availableCopies),
-        cover: image,
-        isbn: formatISBN(formData.isbn),
-      });
-
       const response = await fetch("/api/books", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,13 +77,11 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
           totalCopies: parseInt(formData.totalCopies),
           availableCopies: parseInt(formData.availableCopies),
           cover: image,
-          isbn: formatISBN(formData.isbn),
+          isbn: formData.isbn,
         }),
       });
 
-      console.log("Response status:", response.status);
       const data = await response.json();
-      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.message || "Failed to add book");
@@ -120,7 +107,6 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
       // Call onSuccess callback if provided
       onSuccess?.();
     } catch (error) {
-      console.error("Error adding book:", error);
       toast.error(error instanceof Error ? error.message : "Failed to add book. Please try again.");
     } finally {
       setIsSubmitting(false);
