@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { books } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -29,7 +29,7 @@ export const readBooks = async (page: number = 1, pageSize: number = 10) => {
     const offset = (page - 1) * pageSize;
     
     const [booksData, totalCount] = await Promise.all([
-      db.select().from(books).limit(pageSize).offset(offset),
+      db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset),
       db.select({ count: books.id }).from(books).then(res => res.length)
     ]);
 
