@@ -17,6 +17,7 @@ export const createBooks = async (isbn: string, title: string, author: string, g
   };
   try {
     const res = await db.insert(books).values(book);
+    console.log(res);
     return res;
   } catch (error) {
     console.log("Something Went Wrong :", error);

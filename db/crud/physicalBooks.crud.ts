@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export const createPhysicalBooks = async (bookId: number, borrowed: boolean, returnDate: string, userId: string, currTransactionId: number) => {
+export const createPhysicalBooks = async (bookId: number, borrowed: boolean, returnDate: any, userId: string, currTransactionId: number) => {
   const physicalBook: typeof physicalBooks.$inferInsert = {
     bookId,
     borrowed,
