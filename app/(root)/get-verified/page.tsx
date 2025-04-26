@@ -1,7 +1,7 @@
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
-import { verifyPending } from "@/db/schema";
+import { verifyPending } from "@/drizzle/schema";
 // import mail from "@/lib/mail"; // optional for now
 
 if (!process.env.DATABASE_URL) {
@@ -18,9 +18,9 @@ async function main(userId: string, email: string) {
 
   try {
     await db.insert(verifyPending).values(user);
-    
+
     const client = await clerkClient();
-    
+
     await client.users.updateUserMetadata(userId, {
       publicMetadata: {
         verificationStatus: "requested",
@@ -30,10 +30,7 @@ async function main(userId: string, email: string) {
     console.log("New user created & metadata updated!");
     return "Done";
   } catch (error: unknown) {
-    if (
-      error instanceof Error &&
-      error.message.toLowerCase().includes("duplicate")
-    ) {
+    if (error instanceof Error && error.message.toLowerCase().includes("duplicate")) {
       return "already";
     }
     return "Error";
