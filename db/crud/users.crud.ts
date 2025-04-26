@@ -13,38 +13,33 @@ export const createUsers = async (clerkId: string, primaryEmail: string, univers
 
   try {
     const res = await db.insert(users).values(user);
-    console.log("createUsers:", res);
   } catch (error) {
-    console.log("Something Went Wrong :", error);
+    console.error("Error creating user:", error);
   }
 };
 
 export const readUsers = async () => {
   try {
     const res = await db.select().from(users);
-    console.log("readUsers:", res);
-
     return res;
   } catch (error) {
-    console.log("Something Went Wrong :", error);
+    console.error("Error reading users:", error);
   }
 };
 
 export const updateUsers = async (clerkId: string, newUniversityId: string) => {
   try {
     // const res = await db.update(users).set({ universityId: newUniversityId }).where(eq(users.clerkId, clerkId));
-    // console.log("updateUsers:", res);
   } catch (error) {
-    console.log("Something Went Wrong :", error);
+    console.error("Error updating user:", error);
   }
 };
 
 export const deleteUsers = async (clerkId: string) => {
   try {
     const res = await db.delete(users).where(eq(users.clerkId, clerkId));
-    console.log("deleteUsers:", res);
   } catch (error) {
-    console.log("Something Went Wrong :", error);
+    console.error("Error deleting user:", error);
   }
 };
 

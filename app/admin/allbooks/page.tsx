@@ -1,5 +1,5 @@
 import { readBooks } from "@/db/crud/books.crud";
-import BooksTable from "@/components/ui/BooksTable";
+import BooksTableWrapper from "@/components/ui/BooksTableWrapper";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,13 +12,14 @@ interface PageProps {
 }
 
 export default async function Page({ searchParams }: PageProps) {
-  const page = searchParams?.page;
+  // Ensure searchParams is properly handled
+  const { page } = await Promise.resolve(searchParams || {});
   const currentPage = typeof page === 'string' ? Number(page) : 1;
   const pageSize = 10;
   
   const { books, totalPages, totalBooks } = await readBooks(currentPage, pageSize);
 
-  return <BooksTable 
+  return <BooksTableWrapper 
     initialBooks={books} 
     totalPages={totalPages} 
     totalBooks={totalBooks} 
