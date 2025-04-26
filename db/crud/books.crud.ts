@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { books } from "@/drizzle/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, ilike, or } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -86,4 +86,17 @@ export async function fetchBookById(id: number) {
   const result = await db.select().from(books).where(eq(books.id, id)).limit(1);
 
   return result[0] || null;
+}
+
+export async function fetchBooksByQuery(query: string) {
+  if (!query) {
+    // Return all books if no query
+    return db.select().from(books).limit(15);
+  }
+
+  return db
+    .select()
+    .from(books)
+    .where(ilike(books.title, `%${query}%`))
+    .limit(15);
 }

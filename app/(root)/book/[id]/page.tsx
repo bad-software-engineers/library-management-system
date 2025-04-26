@@ -16,7 +16,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     <div className="h-full flex flex-col items-center w-full">
       <section className="flex mx-4 my-4">
         <Link href="/">
-          <Button size={"lg"}>Home</Button>
+          <Button size={"lg"}>Go Back</Button>
         </Link>
       </section>
       <BookOverview {...bookDetails} />
