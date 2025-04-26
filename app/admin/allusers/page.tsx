@@ -12,7 +12,6 @@ const Page = () => {
   // Function to fetch users
   const getUsers = async () => {
     const fetchedUsers = await getUsersWithClerk(); // Call the server function
-    console.log("Fetched Users:", fetchedUsers); // Log the fetched users for debugging
     const sortedUsers = fetchedUsers.sort((a: any, b: any) => {
       const roleA = a.role || "user";
       const roleB = b.role || "user";
@@ -50,9 +49,10 @@ const Page = () => {
         <TableBody>
           {users.map((user) => {
             const role = user.role || "user";
+            const uniqueKey = `${user.id}-${user.email}`; // Create a unique key
 
             return (
-              <TableRow key={user.id}>
+              <TableRow key={uniqueKey}>
                 <TableCell>
                   <img src={user.profile} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                 </TableCell>
@@ -63,9 +63,8 @@ const Page = () => {
                     <DropdownMenuTrigger asChild>
                       {role === "admin" ? (
                         <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] bg-green-300/80">
-                        {String(role)}
-                      </Button>
-                        
+                          {String(role)}
+                        </Button>
                       ) : (
                         <Button variant="outline" className="capitalize flex items-center gap-2 min-w-[80px] ">
                           {String(role)}
@@ -74,11 +73,11 @@ const Page = () => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {["user", "admin"].map((r) => (
-                        <DropdownMenuItem asChild key={r}>
+                        <DropdownMenuItem asChild key={`${uniqueKey}-${r}`}>
                           <button
-                            type="button" // Use button instead of form
+                            type="button"
                             className={`w-full text-left ${r === role ? "font-semibold text-blue-500" : ""}`}
-                            onClick={() => handleRoleChange(user.id, r)} // Directly handle role change
+                            onClick={() => handleRoleChange(user.id, r)}
                           >
                             {r.charAt(0).toUpperCase() + r.slice(1)}
                           </button>

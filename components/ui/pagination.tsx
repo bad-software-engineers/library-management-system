@@ -7,9 +7,10 @@ interface PaginationProps {
   currentPage: number;
   totalPages: number;
   baseUrl: string;
+  className?: string;
 }
 
-export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps) {
+export function Pagination({ currentPage, totalPages, baseUrl, className = "" }: PaginationProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -24,7 +25,7 @@ export function Pagination({ currentPage, totalPages, baseUrl }: PaginationProps
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center gap-2 ${className}`}>
       <Button
         variant="outline"
         onClick={() => handlePageChange(currentPage - 1)}
