@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { IKImage, ImageKitProvider } from "imagekitio-next";
@@ -6,7 +8,7 @@ import Image from "next/image";
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
-const BookCard = ({ title, author, genre, rating, cover }: Book) => {
+const BookCard = ({ title, author, genre, rating, cover }: any) => {
   return (
     <section className="text-2xl flex justify-center items-center mt-5">
       <Card>
