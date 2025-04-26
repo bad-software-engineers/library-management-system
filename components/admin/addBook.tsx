@@ -16,7 +16,6 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useState } from "react"
 import { toast } from "sonner"
-import ImageUpload from "../ui/ImageUpload"
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),

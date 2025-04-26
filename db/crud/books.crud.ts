@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { books } from "@/drizzle/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -17,20 +17,36 @@ export const createBooks = async (isbn: string, title: string, author: string, g
   };
   try {
     const res = await db.insert(books).values(book);
-    console.log("createBooks:", res);
-  } catch (error) {
-    console.log("Something Went Wrong :", error);
-  }
-};
-
-export const readBooks = async () => {
-  try {
-    const res = await db.select().from(books);
-    console.log("readBooks:", res);
-
     return res;
   } catch (error) {
     console.log("Something Went Wrong :", error);
+    throw error;
+  }
+};
+
+export const readBooks = async (page: number = 1, pageSize: number = 10) => {
+  try {
+    const offset = (page - 1) * pageSize;
+    
+    const [booksData, totalCount] = await Promise.all([
+      db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset),
+      db.select({ count: books.id }).from(books).then(res => res.length)
+    ]);
+
+    return {
+      books: booksData,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      totalBooks: totalCount
+    };
+  } catch (error) {
+    console.log("Something Went Wrong :", error);
+    return {
+      books: [],
+      totalPages: 0,
+      currentPage: page,
+      totalBooks: 0
+    };
   }
 };
 
