@@ -17,6 +17,7 @@ export const createBooks = async (isbn: string, title: string, author: string, g
   };
   try {
     const res = await db.insert(books).values(book);
+    console.log(res);
     return res;
   } catch (error) {
     console.log("Something Went Wrong :", error);
@@ -27,17 +28,20 @@ export const createBooks = async (isbn: string, title: string, author: string, g
 export const readBooks = async (page: number = 1, pageSize: number = 10) => {
   try {
     const offset = (page - 1) * pageSize;
-    
+
     const [booksData, totalCount] = await Promise.all([
       db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset),
-      db.select({ count: books.id }).from(books).then(res => res.length)
+      db
+        .select({ count: books.id })
+        .from(books)
+        .then((res) => res.length),
     ]);
 
     return {
       books: booksData,
       totalPages: Math.ceil(totalCount / pageSize),
       currentPage: page,
-      totalBooks: totalCount
+      totalBooks: totalCount,
     };
   } catch (error) {
     console.log("Something Went Wrong :", error);
@@ -45,7 +49,7 @@ export const readBooks = async (page: number = 1, pageSize: number = 10) => {
       books: [],
       totalPages: 0,
       currentPage: page,
-      totalBooks: 0
+      totalBooks: 0,
     };
   }
 };
@@ -67,3 +71,19 @@ export const deleteBooks = async (id: number) => {
     console.log("Something Went Wrong :", error);
   }
 };
+
+export const fetchLimitedBooks = async (limit: number) => {
+  try {
+    const booksData = await db.select().from(books).orderBy(desc(books.id)).limit(limit);
+    return booksData;
+  } catch (error) {
+    console.log("Something went wrong while fetching books:", error);
+    return [];
+  }
+};
+
+export async function fetchBookById(id: number) {
+  const result = await db.select().from(books).where(eq(books.id, id)).limit(1);
+
+  return result[0] || null;
+}

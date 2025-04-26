@@ -3,9 +3,9 @@
 import { ImageKitProvider, IKUpload, IKImage } from "imagekitio-next";
 import { UploadError } from "imagekitio-next/dist/types/components/IKUpload/props";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { validateISBN, formatISBN } from "@/utils/validation";
+import { useRouter } from "next/navigation";
+import { createBookAction } from "@/utils/server-actions"; // Your server action
 
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
@@ -28,7 +28,7 @@ interface BookUploadProps {
   onSuccess?: () => void;
 }
 
-const ImageUpload = ({ onSuccess }: BookUploadProps) => {
+const BookUpload = ({ onSuccess }: BookUploadProps) => {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
@@ -48,14 +48,11 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'isbn') {
-      // Remove any non-digit characters except 'X' for ISBN-10
-      const cleanValue = value.replace(/[^0-9X]/gi, '');
-      // Limit to 13 characters
-      const truncatedValue = cleanValue.slice(0, 13);
-      setFormData(prev => ({ ...prev, [name]: truncatedValue }));
+    if (name === "isbn") {
+      const cleanValue = value.replace(/[^0-9X]/gi, "").slice(0, 13);
+      setFormData((prev) => ({ ...prev, [name]: cleanValue }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -69,27 +66,14 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
         return;
       }
 
-      const response = await fetch("/api/books", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          totalCopies: parseInt(formData.totalCopies),
-          availableCopies: parseInt(formData.availableCopies),
-          cover: image,
-          isbn: formData.isbn,
-        }),
-      });
+      const { title, author, genre, totalCopies, availableCopies, isbn } = formData;
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to add book");
-      }
+      // Pass individual arguments to createBookAction
+      await createBookAction(isbn, title, author, genre, parseInt(totalCopies), parseInt(availableCopies), image);
 
       toast.success("Book added successfully!");
       router.refresh();
-      
+
       // Reset form
       setFormData({
         title: "",
@@ -104,7 +88,6 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
       setUploadKey(Date.now());
       setUploadDone(false);
 
-      // Call onSuccess callback if provided
       onSuccess?.();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to add book. Please try again.");
@@ -135,86 +118,46 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
     <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
+          {/** Title */}
           <div>
             <label className="block text-sm font-medium mb-1">Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="The Great Gatsby"
-              required
-            />
+            <input type="text" name="title" value={formData.title} onChange={handleChange} className="w-full p-2 border rounded" placeholder="The Great Gatsby" required />
           </div>
+
+          {/** Author */}
           <div>
             <label className="block text-sm font-medium mb-1">Author</label>
-            <input
-              type="text"
-              name="author"
-              value={formData.author}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="F. Scott Fitzgerald"
-              required
-            />
+            <input type="text" name="author" value={formData.author} onChange={handleChange} className="w-full p-2 border rounded" placeholder="F. Scott Fitzgerald" required />
           </div>
+
+          {/** Genre */}
           <div>
             <label className="block text-sm font-medium mb-1">Genre</label>
-            <input
-              type="text"
-              name="genre"
-              value={formData.genre}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="Fiction, Classic"
-              required
-            />
+            <input type="text" name="genre" value={formData.genre} onChange={handleChange} className="w-full p-2 border rounded" placeholder="Fiction, Classic" required />
           </div>
+
+          {/** ISBN */}
           <div>
             <label className="block text-sm font-medium mb-1">ISBN</label>
-            <input
-              type="text"
-              name="isbn"
-              value={formData.isbn}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="9780743273565"
-              required
-            />
+            <input type="text" name="isbn" value={formData.isbn} onChange={handleChange} className="w-full p-2 border rounded" placeholder="9780743273565" required />
           </div>
+
+          {/** Total Copies */}
           <div>
             <label className="block text-sm font-medium mb-1">Total Copies</label>
-            <input
-              type="number"
-              name="totalCopies"
-              value={formData.totalCopies}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="10"
-              min="1"
-              required
-            />
+            <input type="number" name="totalCopies" value={formData.totalCopies} onChange={handleChange} className="w-full p-2 border rounded" placeholder="10" min="1" required />
           </div>
+
+          {/** Available Copies */}
           <div>
             <label className="block text-sm font-medium mb-1">Available Copies</label>
-            <input
-              type="number"
-              name="availableCopies"
-              value={formData.availableCopies}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="8"
-              min="0"
-              required
-            />
+            <input type="number" name="availableCopies" value={formData.availableCopies} onChange={handleChange} className="w-full p-2 border rounded" placeholder="8" min="0" required />
           </div>
         </div>
 
+        {/** Image upload */}
         <div
-          className={`p-6 border-2 rounded-lg text-center transition ${
-            dragging ? "border-blue-500 bg-blue-50" : "border-dashed border-gray-300"
-          }`}
+          className={`p-6 border-2 rounded-lg text-center transition ${dragging ? "border-blue-500 bg-blue-50" : "border-dashed border-gray-300"}`}
           onDragOver={(e) => {
             e.preventDefault();
             setDragging(true);
@@ -223,37 +166,26 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
           onDrop={() => setDragging(false)}
         >
           <p className="mb-2">Drag & Drop your book cover here, or click to upload</p>
-          <IKUpload
-            key={uploadKey}
-            fileName="book-cover.png"
-            onSuccess={handleImageSuccess}
-            onError={handleImageError}
-            onUploadProgress={onUploadProgress}
-            className="cursor-pointer"
-          />
+          <IKUpload key={uploadKey} fileName="book-cover.png" onSuccess={handleImageSuccess} onError={handleImageError} onUploadProgress={onUploadProgress} className="cursor-pointer" />
         </div>
 
+        {/** Upload progress */}
         {progress > 0 && progress < 100 && (
           <div className="w-full bg-gray-200 rounded-full h-2.5">
-            <div
-              className="bg-blue-600 h-2.5 rounded-full"
-              style={{ width: `${progress}%` }}
-            ></div>
+            <div className="bg-blue-600 h-2.5 rounded-full" style={{ width: `${progress}%` }}></div>
           </div>
         )}
 
+        {/** Uploaded Image */}
         {image && (
           <div className="mt-4 flex justify-center">
             <IKImage path={image} height={200} width={150} alt="Book Cover" />
           </div>
         )}
 
+        {/** Submit button */}
         <div className="flex justify-end">
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
-          >
+          <button type="submit" disabled={isSubmitting} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50">
             {isSubmitting ? "Adding..." : "Add Book"}
           </button>
         </div>
@@ -262,4 +194,4 @@ const ImageUpload = ({ onSuccess }: BookUploadProps) => {
   );
 };
 
-export default ImageUpload;
+export default BookUpload;
