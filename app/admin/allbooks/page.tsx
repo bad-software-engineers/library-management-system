@@ -1,11 +1,5 @@
 import { readBooks } from "@/db/crud/books.crud";
 import BooksTableWrapper from "@/components/ui/BooksTableWrapper";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "All Books | Library Management System",
-  description: "View and manage all books in the library",
-};
 
 interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };

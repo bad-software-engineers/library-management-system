@@ -203,3 +203,47 @@ export const readPhysicalBooks = async (bookId: number) => {
     throw error;
   }
 };
+
+export const fetchBooksByQuery = async (query: string, page: number = 1, pageSize: number = 10) => {
+  try {
+    const offset = (page - 1) * pageSize;
+
+    const [searchResults, totalCount] = await Promise.all([
+      db.select()
+        .from(books)
+        .where(
+          sql`LOWER(title) LIKE LOWER(${'%' + query + '%'}) OR 
+              LOWER(author) LIKE LOWER(${'%' + query + '%'}) OR 
+              LOWER(isbn) LIKE LOWER(${'%' + query + '%'}) OR
+              LOWER(genre) LIKE LOWER(${'%' + query + '%'})`
+        )
+        .orderBy(desc(books.id))
+        .limit(pageSize)
+        .offset(offset),
+      db.select({ count: books.id })
+        .from(books)
+        .where(
+          sql`LOWER(title) LIKE LOWER(${'%' + query + '%'}) OR 
+              LOWER(author) LIKE LOWER(${'%' + query + '%'}) OR 
+              LOWER(isbn) LIKE LOWER(${'%' + query + '%'}) OR
+              LOWER(genre) LIKE LOWER(${'%' + query + '%'})`
+        )
+        .then((res) => res.length)
+    ]);
+    
+    return {
+      books: searchResults,
+      totalPages: Math.ceil(totalCount / pageSize),
+      currentPage: page,
+      totalBooks: totalCount
+    };
+  } catch (error) {
+    console.error("Error searching books:", error);
+    return {
+      books: [],
+      totalPages: 0,
+      currentPage: page,
+      totalBooks: 0
+    };
+  }
+};

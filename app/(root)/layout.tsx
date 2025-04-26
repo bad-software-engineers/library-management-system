@@ -7,7 +7,10 @@ import { unstable_ViewTransition as ViewTransition } from "react";
 import HeaderWithUserInfo from "@/components/ui/HeaderWithUserInfo";
 
 export const metadata: Metadata = {
-  title: "LMS",
+  title: {
+    template: '%s | Library Management System',
+    default: 'Home | Library Management System',
+  },
   description: "Library Management System",
 };
 

@@ -1,9 +1,13 @@
 import Sidebar from "@/components/admin/Sidebar";
 import "../globals.css";
 import Header from "@/components/admin/Header";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Admin Dashboard",
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Admin Dashboard | Library Management System',
+    default: 'Admin Dashboard | Library Management System',
+  },
   description: "Manage everything from here if you are admin",
 };
 
