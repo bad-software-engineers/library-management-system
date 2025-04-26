@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { physicalBooks } from "../schema";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -50,4 +50,21 @@ export const deletePhysicalBooks = async (pid: number) => {
   }
 };
 
-readPhysicalBooks();
+export const checkAvailablePhysicalBooks = async (bookId: number) => {
+  try {
+    const availableBooks = await db
+      .select()
+      .from(physicalBooks)
+      .where(
+        and(
+          eq(physicalBooks.bookId, bookId), // Ensure we're looking for the correct book
+          eq(physicalBooks.borrowed, false) // Ensure it's not already borrowed
+        )
+      );
+
+    return availableBooks;
+  } catch (error) {
+    console.log("Error fetching available books:", error);
+    throw error;
+  }
+};
