@@ -35,7 +35,7 @@ export default async function AdminDashboard() {
         <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-6 rounded-xl shadow-lg text-white">
           <div className="flex flex-col h-full">
             <div className="flex items-center mb-4">
-              <UsersIcon className="w-12 h-12 text-white" />
+            <UsersIcon className="w-12 h-12 text-white" />
             </div>
             <div>
               <h2 className="text-xl font-semibold mb-2">Total Users</h2>

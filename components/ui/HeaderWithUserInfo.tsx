@@ -48,9 +48,13 @@ export default function HeaderWithUserInfo() {
 
       <SignedIn>
         <section className="mx-6 my-4 flex gap-x-5 items-center justify-center">
-          {user?.publicMetadata?.role === "admin" && (
+          {user?.publicMetadata?.role === "admin" ? (
             <Link href="/admin">
               <Button size="default">Admin Dashboard</Button>
+            </Link>
+          ) : (
+            <Link href="/user">
+              <Button size="default">User Dashboard</Button>
             </Link>
           )}
           <div className="scale-125 flex items-center justify-center">
