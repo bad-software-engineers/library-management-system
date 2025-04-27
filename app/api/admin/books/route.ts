@@ -8,4 +8,4 @@ export async function GET(request: NextRequest) {
 
   const result = await readBooks(page, pageSize);
   return NextResponse.json(result);
-}
+} 
