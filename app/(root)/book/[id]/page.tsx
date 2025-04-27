@@ -1,46 +1,70 @@
-import { fetchBookById } from "@/db/crud/books.crud";
-import BookOverview from "@/components/ui/BookOverview";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import type { Metadata } from "next";
+"use client";
 
-export default async function Page({ params }: { params: { id: string } }) {
-  // Ensure params is properly handled
-  const { id } = await Promise.resolve(params);
+import { useState, useEffect, use } from "react";
+import { Button } from "@/components/ui/button";
+import BookOverview from "@/components/ui/BookOverview";
+import { handleBorrowBook, fetchBookDetails } from "./server";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+
+export default function Page({ params }: any) {
+  const { id }: any = use(params);
   const bookId = Number(id);
-  const bookDetails = await fetchBookById(bookId);
+  const router = useRouter();
+  const { user, isLoaded } = useUser();
+
+  const [borrowed, setBorrowed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [bookDetails, setBookDetails] = useState<any>(null);
+
+  useEffect(() => {
+    if (isLoaded && !user) {
+      router.push("/sign-in");
+    }
+  }, [isLoaded, user, router]);
+
+  useEffect(() => {
+    const loadBook = async () => {
+      const details = await fetchBookDetails(bookId);
+      if (!details) {
+        router.push("/404");
+      } else {
+        setBookDetails(details);
+      }
+    };
+    loadBook();
+  }, [bookId, router]);
+
+  const handleBorrow = async () => {
+    if (!user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    setLoading(true);
+    const userId = user.id;
+    const result = await handleBorrowBook(bookId, userId);
+    setLoading(false);
+
+    if (result.success) {
+      setBorrowed(true);
+    }
+  };
 
   if (!bookDetails) {
-    redirect("/404");
+    return <div>Loading...</div>;
   }
 
   return (
     <div className="h-full flex flex-col items-center w-full">
       <section className="flex mx-4 my-4">
         <Link href="/">
-          <Button size={"lg"}>Go Back</Button>
+          <Button size="lg">Go Back</Button>
         </Link>
       </section>
-      <BookOverview
-        title={bookDetails.title}
-        author={bookDetails.author}
-        genre={bookDetails.genre}
-        totalCopies={bookDetails.totalCopies}
-        availableCopies={bookDetails.availableCopies}
-        cover={bookDetails.cover}
-        isbn={bookDetails.isbn}
-      />
+
+      <BookOverview {...bookDetails} onBorrow={handleBorrow} borrowed={borrowed} loading={loading} />
     </div>
   );
-}
-
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  // Ensure params is properly handled
-  const { id } = await Promise.resolve(params);
-  const bookId = Number(id);
-  const book = await fetchBookById(bookId);
-  return {
-    title: book ? book.title : 'Book Details',
-  };
 }

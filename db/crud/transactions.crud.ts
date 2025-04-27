@@ -59,7 +59,7 @@ export const deleteTransactions = async (tid: number) => {
   }
 };
 
-export const getUserTransactionStatus = async (bookId: number, userId: string) => {
+export const getUserTransactionStatus = async (bookId: number, userId: string | undefined) => {
   try {
     const res = await db
       .select({
