@@ -27,8 +27,8 @@ const BookCard = ({ title, author, genre, rating, cover }: any) => {
             />
           </ImageKitProvider>
         </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
   );
 };
 
