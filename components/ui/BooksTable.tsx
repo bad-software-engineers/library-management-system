@@ -47,10 +47,20 @@ interface BooksTableProps {
 const urlEndpoint = process.env.NEXT_PUBLIC_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
+const authenticator = async () => {
+  const res = await fetch("/api/auth");
+  const data = await res.json();
+  return {
+    signature: data.signature,
+    expire: data.expire,
+    token: data.token,
+  };
+};
+
 const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: BooksTableProps) => {
   const router = useRouter();
   const { showToast } = useToast();
-  const [books, setBooks] = useState<Book[]>(initialBooks);
+  const books = initialBooks;
   const [sortField, setSortField] = useState<keyof Book>("id");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
@@ -122,7 +132,7 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
         totalCopies: result.totalCopies, 
         availableCopies: result.availableCopies 
       };
-      setBooks(books.map(book => book.id === selectedBook.id ? updatedBook : book));
+      // setBooks(books.map(book => book.id === selectedBook.id ? updatedBook : book));
       setIsRemoveDialogOpen(false);
       setSelectedPid(null);
       showToast("Physical book removed successfully", "success");
@@ -143,7 +153,7 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
           totalCopies: result.totalCopies!, 
           availableCopies: result.availableCopies! 
         };
-        setBooks(books.map(book => book.id === bookId ? updatedBook : book));
+        // setBooks(books.map(book => book.id === bookId ? updatedBook : book));
         setIsUpdateDialogOpen(false);
         showToast(`New physical copy created successfully! Copy ID: ${result.physicalBookId}`, "success", 6000);
       } else {
@@ -181,9 +191,9 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
         throw new Error(errorData.error || 'Failed to update book');
       }
 
-      setBooks(books.map(book => 
-        book.id === selectedBook.id ? selectedBook : book
-      ));
+      // setBooks(books.map(book => 
+      //   book.id === selectedBook.id ? selectedBook : book
+      // ));
       
       setIsUpdateDialogOpen(false);
       showToast("Book updated successfully", "success");
@@ -223,6 +233,7 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
     <div className="w-full mt-8">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Books</h2>
+        <div className="flex gap-2">
         <Dialog>
           <DialogTrigger asChild>
             <Button>
@@ -237,6 +248,10 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
             <ImageUpload />
           </DialogContent>
         </Dialog>
+          <Button variant="outline" onClick={() => { setSortField("id"); setSortDirection("desc"); }}>
+            Newest First
+          </Button>
+        </div>
       </div>
 
       <Table>
@@ -408,7 +423,7 @@ const BooksTable = ({ initialBooks, totalPages, totalBooks, currentPage }: Books
                   </div>
                   <div className="flex-1">
                     <div className="p-4 border-2 border-dashed rounded-lg">
-                      <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint}>
+                      <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint} authenticator={authenticator}>
                         <p className="text-sm text-gray-500 mb-2">Upload new cover image</p>
                         <IKUpload
                           fileName="book-cover.jpg"

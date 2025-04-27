@@ -10,26 +10,25 @@ const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;
 
 const BookCard = ({ title, author, genre, rating, cover }: any) => {
   return (
-    <section className="text-2xl flex justify-center items-center mt-5">
-      <Card>
-        <CardHeader className="w-75">
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>By {author}</CardDescription>
-        </CardHeader>
-        <CardContent className="flex justify-center">
+    <Card className="w-[180px] overflow-hidden">
+      <CardContent className="pt-1 px-2 pb-2">
+        <div className="text-center mb-1">
+          <h3 className="font-medium text-sm line-clamp-1">{title}</h3>
+          <p className="text-xs text-gray-500 line-clamp-1">{author}</p>
+        </div>
+        <div className="flex justify-center">
           <ImageKitProvider publicKey={publicKey} urlEndpoint={urlEndpoint}>
-            <IKImage path={cover} height={200} width={150} alt="Book" />
+            <IKImage 
+              path={cover} 
+              height={180} 
+              width={120} 
+              alt={title}
+              className="object-cover rounded-sm"
+            />
           </ImageKitProvider>
+        </div>
         </CardContent>
-        <CardFooter className="flex flex-col gap-2 justify-start w-40 ml-0">
-          <div className="flex flex-row gap-1">
-            <Image src="/icons/star.svg" alt="star" width={22} height={22} />
-            <p>{rating} / 5</p>
-          </div>
-          <div className="italic text-[#EED1AC]">{genre}</div>
-        </CardFooter>
       </Card>
-    </section>
   );
 };
 

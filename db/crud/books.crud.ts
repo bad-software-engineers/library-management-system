@@ -29,13 +29,9 @@ export const readBooks = async (page: number = 1, pageSize: number = 10) => {
   try {
     const offset = (page - 1) * pageSize;
 
-    const [booksData, totalCount] = await Promise.all([
-      db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset),
-      db
-        .select({ count: books.id })
-        .from(books)
-        .then((res) => res.length),
-    ]);
+    const [booksData, [{ count }]] = await Promise.all([db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset), db.select({ count: sql<number>`count(*)` }).from(books)]);
+
+    const totalCount = Number(count);
 
     return {
       books: booksData,

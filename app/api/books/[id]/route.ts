@@ -6,7 +6,8 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const bookId = parseInt(params.id);
+    const { id } = await Promise.resolve(params);
+    const bookId = parseInt(id);
     if (isNaN(bookId)) {
       return NextResponse.json(
         { error: "Invalid book ID" },
