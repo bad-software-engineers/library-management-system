@@ -79,7 +79,7 @@ export default function Home() {
         <p>Loading books...</p>
       ) : searchResult.books.length > 0 ? (
         <>
-          <div className="flex flex-wrap justify-around px-10 w-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-6 w-full max-w-7xl mx-auto">
             {searchResult.books.map((book) => (
               <Link key={book.id} href={`/book/${book.id}`} passHref>
                 <BookCard {...book} />
