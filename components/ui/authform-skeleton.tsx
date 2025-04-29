@@ -1,5 +1,5 @@
 import { Skeleton } from "./skeleton";
-
+import React from "react";
 interface authformSkeleton {
   type: "signin" | "signup";
 }

@@ -250,28 +250,26 @@ export const fetchBooksByQuery = async (query: string, page: number = 1, pageSiz
 
 export const readSingleBook = async (bookId: number) => {
   try {
-    // Fetch the main book details
-    const book = await db
-      .select()
-      .from(books)
-      .where(eq(books.id, bookId))
-      .then((res) => res[0]);
+    // First get the book details
+    const book = await db.select().from(books).where(eq(books.id, bookId)).limit(1);
 
-    if (!book) return null;
+    if (!book || book.length === 0) {
+      return null;
+    }
 
-    // Count available physical copies
-    const availableCopies = await db
-      .select()
+    // Count available physical books (where borrowed = false)
+    const availableCount = await db
+      .select({ count: sql<number>`count(*)` })
       .from(physicalBooks)
-      .where(and(eq(physicalBooks.bookId, bookId), eq(physicalBooks.borrowed, false)))
-      .then((res) => res.length);
+      .where(and(eq(physicalBooks.bookId, bookId), eq(physicalBooks.borrowed, false)));
 
+    // Combine book details with available count
     return {
-      ...book,
-      availableCopies,
+      ...book[0],
+      availableBooks: Number(availableCount[0].count),
     };
   } catch (error) {
-    console.error("Failed to fetch single book:", error);
-    return null;
+    console.error("Error in readSingleBook:", error);
+    throw error;
   }
 };

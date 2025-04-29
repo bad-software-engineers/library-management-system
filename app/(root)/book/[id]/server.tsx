@@ -1,31 +1,46 @@
 "use server";
 
 import { createTransactions, getUserTransactionStatus } from "@/db/crud/transactions.crud";
-import { readSingleBook } from "@/db/crud/books.crud"; // updated import
-import { checkAvailablePhysicalBooks } from "@/db/crud/physicalBooks.crud";
+import { readSingleBook } from "@/db/crud/books.crud";
+import { findOneAvailablePhysicalBookId } from "@/db/crud/physicalBooks.crud";
 
 export async function handleBorrowBook(bookId: number, userId: string) {
-  const { borrowed, requested } = await getUserTransactionStatus(bookId, userId);
+  try {
+    // Check user transaction status
+    const { borrowed, requested, totalBorrowed } = await getUserTransactionStatus(bookId, userId);
 
-  if (borrowed) {
-    return { success: false, message: "You have already borrowed this book." };
-  }
+    if (borrowed) {
+      return { success: false, message: "You have already borrowed this book." };
+    }
 
-  if (requested) {
-    return { success: false, message: "You have already requested this book." };
-  }
+    if (requested) {
+      return { success: false, message: "You have already requested this book." };
+    }
 
-  const availableBooks = await checkAvailablePhysicalBooks(bookId);
+    if (totalBorrowed >= 4) {
+      return { success: false, message: "You have reached the maximum limit of 4 borrowed books." };
+    }
 
-  if (availableBooks && availableBooks.length > 0) {
-    const borrowedDate = new Date().toISOString().split("T")[0];
-    const returnDate = new Date(new Date().setDate(new Date().getDate() + 15)).toISOString();
+    // Find an available physical book ID
+    const physicalBookId = await findOneAvailablePhysicalBookId(bookId);
 
-    await createTransactions(bookId, userId, "", "requested", borrowedDate, returnDate);
+    if (!physicalBookId) {
+      return { success: false, message: "Book is unavailable." };
+    }
 
-    return { success: true, message: "Borrow request sent successfully!" };
-  } else {
-    return { success: false, message: "Book is unavailable." };
+    // Create a transaction for the borrow request
+    await createTransactions(physicalBookId, userId, "", "REQUESTED", undefined, undefined);
+
+    return {
+      success: true,
+      message: "Borrow request sent successfully!",
+    };
+  } catch (error) {
+    console.error("Error in handleBorrowBook:", error);
+    return {
+      success: false,
+      message: "An error occurred while processing your request.",
+    };
   }
 }
 
@@ -36,5 +51,25 @@ export async function fetchBookDetails(bookId: number) {
   } catch (error) {
     console.error("Error fetching book details:", error);
     return null;
+  }
+}
+
+export async function checkUserBookStatus(bookId: number, userId: string) {
+  try {
+    const { borrowed, requested, totalBorrowed } = await getUserTransactionStatus(bookId, userId);
+    return {
+      success: true,
+      borrowed,
+      requested,
+      maxBorrowed: totalBorrowed >= 4,
+    };
+  } catch (error) {
+    console.error("Error checking user book status:", error);
+    return {
+      success: false,
+      borrowed: false,
+      requested: false,
+      maxBorrowed: false,
+    };
   }
 }

@@ -16,6 +16,8 @@ const BookOverview = ({
   isbn,
   onBorrow,
   borrowed,
+  requested,
+  maxBorrowed,
   loading,
 }: {
   title: string;
@@ -27,8 +29,20 @@ const BookOverview = ({
   isbn: string;
   onBorrow: () => void;
   borrowed: boolean;
+  requested: boolean;
+  maxBorrowed: boolean;
   loading: boolean;
 }) => {
+  const getButtonText = () => {
+    if (loading) return "Borrowing...";
+    if (borrowed) return "Already Borrowed";
+    if (requested) return "Request Pending";
+    if (maxBorrowed) return "Maximum Books Borrowed";
+    return "Borrow Book";
+  };
+
+  const isDisabled = loading || borrowed || requested || maxBorrowed;
+
   return (
     <section className="flex flex-col-reverse items-center justify-around gap-12 sm:gap-32 xl:flex-row xl:gap-8 mx-10 my-10 w-full max-w-7xl">
       {/* Left side: Book Info */}
@@ -62,10 +76,10 @@ const BookOverview = ({
         {/* Borrow Button */}
         <button
           onClick={onBorrow}
-          disabled={borrowed || loading}
+          disabled={isDisabled}
           className="mt-6 w-[200px] px-6 py-3 bg-[#EED1AC] text-black rounded-xl text-lg hover:bg-[#dcb982] transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {borrowed ? "Already Borrowed" : loading ? "Borrowing..." : "Borrow Book"}
+          {getButtonText()}
         </button>
       </div>
 
