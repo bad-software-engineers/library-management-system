@@ -1,11 +1,11 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { physicalBooks, transactions } from "../schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export const createTransactions = async (physicalBookId: number, userId: string, adminId: string, status: string, borrowedDate: string, returnedDate: string) => {
+export const createTransactions = async (physicalBookId: number, userId: string, adminId: string, status: string, borrowedDate: any, returnedDate: string | undefined) => {
   const transaction: typeof transactions.$inferInsert = {
     physicalBookId,
     userId,
@@ -50,6 +50,29 @@ export const updateTransactions = async (tid: number, status: string, adminId: s
   }
 };
 
+export const updateTransactionsSuccess = async (tid: number, status: string, adminId: string) => {
+  try {
+    const borrowedDate = new Date();
+    const returnedDate = new Date(borrowedDate);
+    returnedDate.setDate(borrowedDate.getDate() + 15); // Add 15 days
+
+    const res = await db
+      .update(transactions)
+      .set({
+        status,
+        adminId,
+        borrowedDate: borrowedDate.toISOString(),
+        returnedDate: returnedDate.toISOString(),
+      })
+      .where(eq(transactions.tid, tid));
+
+    console.log("updateTransactions:", res);
+  } catch (error) {
+    console.error("Something Went Wrong:", error);
+    throw new Error("Failed to update transaction");
+  }
+};
+
 export const deleteTransactions = async (tid: number) => {
   try {
     const res = await db.delete(transactions).where(eq(transactions.tid, tid));
@@ -61,7 +84,8 @@ export const deleteTransactions = async (tid: number) => {
 
 export const getUserTransactionStatus = async (bookId: number, userId: string | undefined) => {
   try {
-    const res = await db
+    // Check if user has any active transaction (BORROWED or REQUESTED) for any physical copy of this book
+    const bookStatus = await db
       .select({
         status: transactions.status,
       })
@@ -69,28 +93,33 @@ export const getUserTransactionStatus = async (bookId: number, userId: string | 
       .innerJoin(physicalBooks, eq(transactions.physicalBookId, physicalBooks.pid))
       .where(
         and(
-          eq(physicalBooks.bookId, bookId), // match bookId through physicalBooks
-          eq(transactions.userId, userId)
+          eq(physicalBooks.bookId, bookId),
+          eq(transactions.userId, userId),
+          // Match the actual status values used in the application
+          sql`${transactions.status} IN ('BORROWED', 'REQUESTED')`
         )
       )
-      .limit(1); // we only need one match
+      .limit(1);
 
-    if (res.length === 0) {
-      return { borrowed: false, requested: false };
-    }
+    // Count total active borrows for the user across all books
+    const activeBorrows = await db
+      .select({
+        count: sql<number>`count(*)`,
+      })
+      .from(transactions)
+      .where(and(eq(transactions.userId, userId), eq(transactions.status, "BORROWED")));
 
-    const status = res[0].status;
+    const totalBorrowed = Number(activeBorrows[0].count);
+    const status = bookStatus[0]?.status;
 
-    if (status === "BORROWED") {
-      return { borrowed: true, requested: false };
-    }
-    if (status === "REQUESTED") {
-      return { borrowed: false, requested: true };
-    }
-
-    return { borrowed: false, requested: false };
+    // Match the exact status strings from the database
+    return {
+      borrowed: status === "BORROWED",
+      requested: status === "REQUESTED",
+      totalBorrowed,
+    };
   } catch (error) {
     console.error("getUserTransactionStatus Error:", error);
-    return { borrowed: false, requested: false };
+    return { borrowed: false, requested: false, totalBorrowed: 0 };
   }
 };

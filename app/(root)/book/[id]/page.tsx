@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import BookOverview from "@/components/ui/BookOverview";
-import { handleBorrowBook, fetchBookDetails } from "./server";
+import { handleBorrowBook, fetchBookDetails, checkUserBookStatus } from "./server";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -15,6 +15,8 @@ export default function Page({ params }: any) {
   const { user, isLoaded } = useUser();
 
   const [borrowed, setBorrowed] = useState(false);
+  const [requested, setRequested] = useState(false);
+  const [maxBorrowed, setMaxBorrowed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bookDetails, setBookDetails] = useState<any>(null);
 
@@ -36,6 +38,20 @@ export default function Page({ params }: any) {
     loadBook();
   }, [bookId, router]);
 
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (user) {
+        const status = await checkUserBookStatus(bookId, user.id);
+        if (status.success) {
+          setBorrowed(status.borrowed);
+          setRequested(status.requested);
+          setMaxBorrowed(status.maxBorrowed);
+        }
+      }
+    };
+    checkStatus();
+  }, [user, bookId]);
+
   const handleBorrow = async () => {
     if (!user) {
       router.push("/sign-in");
@@ -43,12 +59,13 @@ export default function Page({ params }: any) {
     }
 
     setLoading(true);
-    const userId = user.id;
-    const result = await handleBorrowBook(bookId, userId);
+    const result = await handleBorrowBook(bookId, user.id);
     setLoading(false);
 
     if (result.success) {
-      setBorrowed(true);
+      setRequested(true);
+    } else {
+      console.error(result.message);
     }
   };
 
@@ -64,7 +81,7 @@ export default function Page({ params }: any) {
         </Link>
       </section>
 
-      <BookOverview {...bookDetails} onBorrow={handleBorrow} borrowed={borrowed} loading={loading} />
+      <BookOverview {...bookDetails} onBorrow={handleBorrow} borrowed={borrowed} requested={requested} maxBorrowed={maxBorrowed} loading={loading} />
     </div>
   );
 }
