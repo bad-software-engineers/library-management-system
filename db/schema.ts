@@ -8,7 +8,7 @@ export const verifyPending = pgTable("verifyPending", {
 
 export const users = pgTable("users", {
   clerkId: varchar({ length: 255 }).primaryKey(),
-  primaryEmail: varchar({ length: 255 }).notNull()
+  primaryEmail: varchar({ length: 255 }).notNull(),
 });
 
 export const admin = pgTable("admin", {
@@ -38,7 +38,7 @@ export const transactions = pgTable("transactions", {
   userId: varchar("user_id", { length: 255 }).notNull(),
   adminId: varchar("admin_id", { length: 255 }).notNull(),
   status: varchar("status", { length: 50 }).notNull(),
-  borrowedDate: date("borrowed_date").notNull().defaultNow(),
+  borrowedDate: date("borrowed_date"),
   returnedDate: date("returned_date"),
 });
 
