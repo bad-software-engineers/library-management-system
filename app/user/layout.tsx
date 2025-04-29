@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/user/Header";
+import Sidebar from "@/components/user/Sidebar";
+import { ClerkProvider } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: {
@@ -12,13 +14,18 @@ export const metadata: Metadata = {
 
 export default function UserLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="bg-indigo-100/75">
-        <main className="flex flex-col p-4 w-full">
-          <Header />
-          {children}
-        </main>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className="bg-indigo-100/75">
+          <main className="flex">
+            <Sidebar />
+            <div className="flex flex-col p-4 w-full">
+              <Header />
+              {children}
+            </div>
+          </main>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 } 
