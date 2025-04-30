@@ -37,13 +37,13 @@ export async function readBooks(
 
   const whereClause = searchQuery
     ? or(
-        like(books.title, searchPattern),
-        like(books.author, searchPattern),
-        like(books.isbn, searchPattern)
-      )
+      like(books.title, searchPattern),
+      like(books.author, searchPattern),
+      like(books.isbn, searchPattern)
+    )
     : undefined;
 
-  const orderByClause = sortOrder === "desc" 
+  const orderByClause = sortOrder === "desc"
     ? desc(books[sortField as keyof typeof books.$inferSelect])
     : asc(books[sortField as keyof typeof books.$inferSelect]);
 
@@ -51,21 +51,19 @@ export async function readBooks(
     db
       .select()
       .from(books)
-      .where(whereClause || sql`1=1`)
+      .where(whereClause)
       .orderBy(orderByClause)
       .limit(pageSize)
       .offset(offset),
     db
       .select({ count: sql<number>`count(*)` })
       .from(books)
-      .where(whereClause || sql`1=1`)
+      .where(whereClause)
   ]);
 
   return {
     books: booksList,
-    total: total[0].count,
-    page,
-    pageSize,
+    totalBooks: total[0].count,
     totalPages: Math.ceil(total[0].count / pageSize)
   };
 }
