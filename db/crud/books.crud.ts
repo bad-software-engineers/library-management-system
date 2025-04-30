@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/neon-http";
 import { books, physicalBooks } from "@/drizzle/schema";
-import { eq, desc, sql, and } from "drizzle-orm";
+import { eq, desc, sql, and, asc, like, or } from "drizzle-orm";
 
 const db = drizzle(process.env.DATABASE_URL!);
 
@@ -25,39 +25,63 @@ export const createBooks = async (isbn: string, title: string, author: string, g
   }
 };
 
-export const readBooks = async (page: number = 1, pageSize: number = 10) => {
-  try {
-    const offset = (page - 1) * pageSize;
+export async function readBooks(
+  page: number = 1,
+  pageSize: number = 10,
+  sortField: string = "title",
+  sortOrder: string = "asc",
+  searchQuery: string = ""
+) {
+  const offset = (page - 1) * pageSize;
+  const searchPattern = `%${searchQuery}%`;
 
-    const [booksData, [{ count }]] = await Promise.all([db.select().from(books).orderBy(desc(books.id)).limit(pageSize).offset(offset), db.select({ count: sql<number>`count(*)` }).from(books)]);
+  const whereClause = searchQuery
+    ? or(
+        like(books.title, searchPattern),
+        like(books.author, searchPattern),
+        like(books.isbn, searchPattern)
+      )
+    : undefined;
 
-    const totalCount = Number(count);
+  const orderByClause = sortOrder === "desc" 
+    ? desc(books[sortField as keyof typeof books.$inferSelect])
+    : asc(books[sortField as keyof typeof books.$inferSelect]);
 
-    return {
-      books: booksData,
-      totalPages: Math.ceil(totalCount / pageSize),
-      currentPage: page,
-      totalBooks: totalCount,
-    };
-  } catch (error) {
-    console.log("Something Went Wrong :", error);
-    return {
-      books: [],
-      totalPages: 0,
-      currentPage: page,
-      totalBooks: 0,
-    };
-  }
-};
+  const [booksList, total] = await Promise.all([
+    db
+      .select()
+      .from(books)
+      .where(whereClause || sql`1=1`)
+      .orderBy(orderByClause)
+      .limit(pageSize)
+      .offset(offset),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(books)
+      .where(whereClause || sql`1=1`)
+  ]);
+
+  return {
+    books: booksList,
+    total: total[0].count,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total[0].count / pageSize)
+  };
+}
 
 export const updateBooks = async (id: number, totalCopies: number, availableCopies: number) => {
   try {
-    const res = await db.update(books).set({ totalCopies, availableCopies }).where(eq(books.id, id));
-    console.log("updateBooks:", res);
-    return res;
+    const updatedBook = await db
+      .update(books)
+      .set({ totalCopies, availableCopies })
+      .where(eq(books.id, id))
+      .returning();
+
+    return updatedBook[0];
   } catch (error) {
     console.log("Something Went Wrong :", error);
-    throw error;
+    return null;
   }
 };
 
