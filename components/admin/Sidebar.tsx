@@ -1,68 +1,68 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Home, Users, BookOpen, ClipboardList, UserPlus } from "lucide-react"
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarProvider,
-  } from "@/components/ui/sidebar"
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from "@/components/ui/sidebar"
 
-   const items = [
-    {
-      img: Home,
-      route: "/admin",
-      text: "Home",
-    },
-    {
-      img: Home,
-      route: "/admin/allusers",
-      text: "All Users",
-    },
-    {
-      img: Home,
-      route: "/admin/allbooks",
-      text: "All Books",
-    },
-    {
-      img: Home,
-      route: "/admin/book-requests",
-      text: "Borrow Requests",
-    },
-    {
-      img: Home,
-      route: "/admin/account-requests",
-      text: "Account Requests",
-    },
-  ];
+const items = [
+  {
+    img: Home,
+    route: "/admin",
+    text: "Dashboard",
+  },
+  {
+    img: Users,
+    route: "/admin/allusers",
+    text: "All Users",
+  },
+  {
+    img: BookOpen,
+    route: "/admin/allbooks",
+    text: "All Books",
+  },
+  {
+    img: ClipboardList,
+    route: "/admin/book-requests",
+    text: "Borrow Requests",
+  },
+  {
+    img: UserPlus,
+    route: "/admin/account-requests",
+    text: "Account Requests",
+  },
+];
 
 const SideBar = () => {
   return (
     <SidebarProvider>
-        <Sidebar>
+      <Sidebar>
         <SidebarContent>
-            <SidebarGroup>
+          <SidebarGroup>
             <SidebarGroupLabel>BookWise</SidebarGroupLabel>
             <SidebarGroupContent>
-                <SidebarMenu>
+              <SidebarMenu>
                 {items.map((item) => (
-                    <SidebarMenuItem key={item.text}>
+                  <SidebarMenuItem key={item.text}>
                     <SidebarMenuButton asChild>
-                        <a href={item.route}>
+                      <a href={item.route}>
                         <item.img />
                         <span>{item.text}</span>
-                        </a>
+                      </a>
                     </SidebarMenuButton>
-                    </SidebarMenuItem>
+                  </SidebarMenuItem>
                 ))}
-                </SidebarMenu>
+              </SidebarMenu>
             </SidebarGroupContent>
-            </SidebarGroup>
+          </SidebarGroup>
         </SidebarContent>
-        </Sidebar>
+      </Sidebar>
     </SidebarProvider>
   )
 }
