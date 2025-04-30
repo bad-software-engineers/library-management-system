@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as borrowServer from "@/app/(root)/book/[id]/server"; // Update this path if needed
+import * as borrowServer from "@/app/(root)/book/[id]/server"; // Adjust this path if needed
 import * as transactionsCrud from "@/db/crud/transactions.crud";
 import * as booksCrud from "@/db/crud/books.crud";
 import * as physicalBooksCrud from "@/db/crud/physicalBooks.crud";
@@ -15,14 +15,14 @@ vi.mock("@/db/crud/books.crud", () => ({
 }));
 
 vi.mock("@/db/crud/physicalBooks.crud", () => ({
-  checkAvailablePhysicalBooks: vi.fn(),
+  findOneAvailablePhysicalBookId: vi.fn(), // Fix: Correct the mock name
 }));
 
 describe("Borrow Book Server Functions", () => {
   const mockGetUserTransactionStatus = transactionsCrud.getUserTransactionStatus as unknown as ReturnType<typeof vi.fn>;
   const mockCreateTransactions = transactionsCrud.createTransactions as unknown as ReturnType<typeof vi.fn>;
   const mockReadSingleBook = booksCrud.readSingleBook as unknown as ReturnType<typeof vi.fn>;
-  const mockCheckAvailableBooks = physicalBooksCrud.checkAvailablePhysicalBooks as unknown as ReturnType<typeof vi.fn>;
+  const mockFindAvailablePhysicalBookId = physicalBooksCrud.findOneAvailablePhysicalBookId as unknown as ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -47,7 +47,7 @@ describe("Borrow Book Server Functions", () => {
 
     it("should allow borrowing if the book is available", async () => {
       mockGetUserTransactionStatus.mockResolvedValueOnce({ borrowed: false, requested: false });
-      mockCheckAvailableBooks.mockResolvedValueOnce([{ id: "p1" }]);
+      mockFindAvailablePhysicalBookId.mockResolvedValueOnce(1); // Fix: Simulate a successful available book
       mockCreateTransactions.mockResolvedValueOnce({});
 
       const result = await borrowServer.handleBorrowBook(1, "user123");
@@ -58,7 +58,7 @@ describe("Borrow Book Server Functions", () => {
 
     it("should return an error if the book is unavailable", async () => {
       mockGetUserTransactionStatus.mockResolvedValueOnce({ borrowed: false, requested: false });
-      mockCheckAvailableBooks.mockResolvedValueOnce([]); // No available books
+      mockFindAvailablePhysicalBookId.mockResolvedValueOnce(null); // No available book
 
       const result = await borrowServer.handleBorrowBook(1, "user123");
 

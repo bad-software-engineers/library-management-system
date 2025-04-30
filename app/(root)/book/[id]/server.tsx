@@ -1,8 +1,9 @@
 "use server";
 
-import { createTransactions, getUserTransactionStatus } from "@/db/crud/transactions.crud";
+import { createTransactions, getUserTransactionStatus, returnTransaction } from "@/db/crud/transactions.crud";
 import { readSingleBook } from "@/db/crud/books.crud";
 import { findOneAvailablePhysicalBookId } from "@/db/crud/physicalBooks.crud";
+import { getAcceptedTransaction } from "@/db/crud/transactions.crud";
 
 export async function handleBorrowBook(bookId: number, userId: string) {
   try {
@@ -57,6 +58,8 @@ export async function fetchBookDetails(bookId: number) {
 export async function checkUserBookStatus(bookId: number, userId: string) {
   try {
     const { borrowed, requested, totalBorrowed } = await getUserTransactionStatus(bookId, userId);
+
+    console.log("User Transaction Status:", { borrowed, requested, totalBorrowed });
     return {
       success: true,
       borrowed,
@@ -71,5 +74,25 @@ export async function checkUserBookStatus(bookId: number, userId: string) {
       requested: false,
       maxBorrowed: false,
     };
+  }
+}
+
+export async function fetchAcceptedTransaction(bookId: number, userId: string) {
+  try {
+    const transaction = await getAcceptedTransaction(userId, bookId);
+    return transaction ? { success: true, transaction } : { success: false, message: "No accepted transaction found." };
+  } catch (error) {
+    console.error("Error fetching accepted transaction:", error);
+    return { success: false, message: "An error occurred while fetching the transaction." };
+  }
+}
+
+export async function handleReturnBook(tid: number) {
+  try {
+    await returnTransaction(tid);
+    return { success: true, message: "Return request submitted successfully!" };
+  } catch (error) {
+    console.error("Error in handleReturnBook:", error);
+    return { success: false, message: "An error occurred while processing the return request." };
   }
 }

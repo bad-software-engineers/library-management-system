@@ -13,7 +13,7 @@ interface PageProps {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
-export default async function Page({ searchParams }: PageProps) {
+export default async function Page({ searchParams }: any) {
   const page = searchParams?.page;
   const currentPage = typeof page === "string" ? Number(page) : 1;
   const pageSize = 10;

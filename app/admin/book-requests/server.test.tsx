@@ -1,24 +1,43 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import * as transactionsServer from "@/app/admin/book-requests/server"; // <-- Update this to correct relative path
+import * as transactionsServer from "@/app/admin/book-requests/server";
 import * as transactionsCrud from "@/db/crud/transactions.crud";
 
+// Mock the db module and the required methods
+vi.mock("@/db", () => ({
+  db: {
+    select: vi.fn().mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockReturnValue({
+          limit: vi.fn().mockResolvedValue([{ tid: 1, physicalBookId: 42 }]), // Mock the returned value
+        }),
+      }),
+    }),
+  },
+}));
+
+// Mock the CRUD functions explicitly
 vi.mock("@/db/crud/transactions.crud", () => ({
   updateTransactions: vi.fn(),
+  updateTransactionsSuccess: vi.fn(),
   readTransactions: vi.fn(),
 }));
 
 describe("Transaction server functions", () => {
-  const mockUpdate = transactionsCrud.updateTransactions as unknown as ReturnType<typeof vi.fn>;
-  const mockRead = transactionsCrud.readTransactions as unknown as ReturnType<typeof vi.fn>;
+  let mockUpdate: ReturnType<typeof vi.spyOn>;
+  let mockRead: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUpdate = vi.spyOn(transactionsCrud, "updateTransactions");
+    mockRead = vi.spyOn(transactionsCrud, "readTransactions");
   });
 
   describe("acceptTransaction", () => {
     it('should call updateTransactions with "accepted" status', async () => {
       mockUpdate.mockResolvedValueOnce({});
-      const result = await transactionsServer.acceptTransaction(1, "user123");
+
+      const validUserId = "user123";
+      const result = await transactionsServer.acceptTransaction(1, validUserId);
 
       expect(mockUpdate).toHaveBeenCalledWith(1, "accepted", "user123");
       expect(result).toEqual({
@@ -36,9 +55,11 @@ describe("Transaction server functions", () => {
   describe("rejectTransaction", () => {
     it('should call updateTransactions with "rejected" status', async () => {
       mockUpdate.mockResolvedValueOnce({});
-      const result = await transactionsServer.rejectTransaction(2, "admin123");
 
-      expect(mockUpdate).toHaveBeenCalledWith(2, "rejected", "admin123");
+      const validUserId = "admin123";
+      const result = await transactionsServer.rejectTransaction(2, validUserId);
+
+      expect(mockUpdate).toHaveBeenCalledWith(2, "rejected", validUserId);
       expect(result).toEqual({
         success: true,
         message: "Transaction rejected successfully",
@@ -57,6 +78,7 @@ describe("Transaction server functions", () => {
       mockRead.mockResolvedValueOnce(fakeData);
 
       const result = await transactionsServer.fetchTransactions();
+
       expect(mockRead).toHaveBeenCalled();
       expect(result).toEqual(fakeData);
     });
