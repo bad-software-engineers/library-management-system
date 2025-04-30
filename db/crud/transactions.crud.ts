@@ -145,3 +145,18 @@ export const getAcceptedTransaction = async (userId: string, bookId: number) => 
     throw error;
   }
 };
+
+export const returnTransaction = async (tid: number) => {
+  try {
+    const res = await db
+      .update(transactions)
+      .set({ status: "RETURN" }) // Update status to "RETURN"
+      .where(eq(transactions.tid, tid));
+
+    console.log("returnTransaction:", res);
+    return res;
+  } catch (error) {
+    console.error("Error updating transaction to return:", error);
+    throw new Error("Failed to update transaction to return.");
+  }
+};

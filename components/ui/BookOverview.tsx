@@ -15,11 +15,12 @@ const BookOverview = ({
   cover,
   isbn,
   onBorrow,
+  onReturn, // New prop for return functionality
   borrowed,
   requested,
   maxBorrowed,
   loading,
-  transaction, // New prop for transaction
+  transaction,
 }: {
   title: string;
   author: string;
@@ -29,21 +30,23 @@ const BookOverview = ({
   cover: string;
   isbn: string;
   onBorrow: () => void;
+  onReturn: () => void; // New prop for return functionality
   borrowed: boolean;
   requested: boolean;
   maxBorrowed: boolean;
   loading: boolean;
-  transaction: any; // Transaction details
+  transaction: any;
 }) => {
   const getButtonText = () => {
-    if (loading) return "Borrowing...";
-    if (borrowed) return "Already Borrowed";
+    if (loading) return "Processing...";
+    if (transaction?.status === "RETURN") return "Return Requested";
+    if (borrowed) return "Return Book";
     if (requested) return "Request Pending";
     if (maxBorrowed) return "Maximum Books Borrowed";
     return "Borrow Book";
   };
 
-  const isDisabled = loading || borrowed || requested || maxBorrowed;
+  const isDisabled = loading || transaction?.status === "RETURN" || (!borrowed && !requested && !maxBorrowed);
 
   return (
     <section className="flex flex-col-reverse items-center justify-around gap-12 sm:gap-32 xl:flex-row xl:gap-8 mx-10 my-10 w-full max-w-7xl">
@@ -75,9 +78,9 @@ const BookOverview = ({
           </div>
         </div>
 
-        {/* Borrow Button */}
+        {/* Borrow/Return Button */}
         <button
-          onClick={onBorrow}
+          onClick={transaction?.status === "RETURN" ? undefined : borrowed ? onReturn : onBorrow}
           disabled={isDisabled}
           className="mt-6 w-[200px] px-6 py-3 bg-[#EED1AC] text-black rounded-xl text-lg hover:bg-[#dcb982] transition-all disabled:bg-gray-400 disabled:cursor-not-allowed"
         >

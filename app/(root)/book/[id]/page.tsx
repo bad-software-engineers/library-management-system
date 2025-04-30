@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import BookOverview from "@/components/ui/BookOverview";
-import { handleBorrowBook, fetchBookDetails, checkUserBookStatus, fetchAcceptedTransaction } from "./server";
+import { handleBorrowBook, fetchBookDetails, checkUserBookStatus, fetchAcceptedTransaction, handleReturnBook } from "./server";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -76,6 +76,20 @@ export default function Page({ params }: any) {
     }
   };
 
+  const handleReturn = async () => {
+    if (!transaction) return;
+
+    setLoading(true);
+    const result = await handleReturnBook(transaction.tid);
+    setLoading(false);
+
+    if (result.success) {
+      setTransaction({ ...transaction, status: "RETURN" }); // Update transaction status in the UI
+    } else {
+      console.error(result.message);
+    }
+  };
+
   if (!bookDetails) {
     return <div>Loading...</div>;
   }
@@ -91,6 +105,7 @@ export default function Page({ params }: any) {
       <BookOverview
         {...bookDetails}
         onBorrow={handleBorrow}
+        onReturn={handleReturn} // Pass the return handler
         borrowed={borrowed}
         requested={requested}
         maxBorrowed={maxBorrowed}
