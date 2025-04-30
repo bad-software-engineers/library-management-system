@@ -19,6 +19,7 @@ const BookOverview = ({
   requested,
   maxBorrowed,
   loading,
+  transaction, // New prop for transaction
 }: {
   title: string;
   author: string;
@@ -32,6 +33,7 @@ const BookOverview = ({
   requested: boolean;
   maxBorrowed: boolean;
   loading: boolean;
+  transaction: any; // Transaction details
 }) => {
   const getButtonText = () => {
     if (loading) return "Borrowing...";

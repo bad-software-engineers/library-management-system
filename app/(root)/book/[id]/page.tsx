@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from "react";
 import { Button } from "@/components/ui/button";
 import BookOverview from "@/components/ui/BookOverview";
-import { handleBorrowBook, fetchBookDetails, checkUserBookStatus } from "./server";
+import { handleBorrowBook, fetchBookDetails, checkUserBookStatus, fetchAcceptedTransaction } from "./server";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
@@ -19,6 +19,7 @@ export default function Page({ params }: any) {
   const [maxBorrowed, setMaxBorrowed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [bookDetails, setBookDetails] = useState<any>(null);
+  const [transaction, setTransaction] = useState<any>(null); // New state for transaction
 
   useEffect(() => {
     if (isLoaded && !user) {
@@ -46,6 +47,12 @@ export default function Page({ params }: any) {
           setBorrowed(status.borrowed);
           setRequested(status.requested);
           setMaxBorrowed(status.maxBorrowed);
+        }
+
+        // Fetch accepted transaction
+        const transactionResult = await fetchAcceptedTransaction(bookId, user.id);
+        if (transactionResult.success) {
+          setTransaction(transactionResult.transaction);
         }
       }
     };
@@ -81,7 +88,15 @@ export default function Page({ params }: any) {
         </Link>
       </section>
 
-      <BookOverview {...bookDetails} onBorrow={handleBorrow} borrowed={borrowed} requested={requested} maxBorrowed={maxBorrowed} loading={loading} />
+      <BookOverview
+        {...bookDetails}
+        onBorrow={handleBorrow}
+        borrowed={borrowed}
+        requested={requested}
+        maxBorrowed={maxBorrowed}
+        loading={loading}
+        transaction={transaction} // Pass transaction details
+      />
     </div>
   );
 }

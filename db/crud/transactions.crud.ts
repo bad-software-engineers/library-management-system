@@ -96,7 +96,7 @@ export const getUserTransactionStatus = async (bookId: number, userId: string | 
           eq(physicalBooks.bookId, bookId),
           eq(transactions.userId, userId),
           // Match the actual status values used in the application
-          sql`${transactions.status} IN ('BORROWED', 'REQUESTED')`
+          sql`${transactions.status} IN ('accepted', 'REQUESTED')`
         )
       )
       .limit(1);
@@ -107,19 +107,41 @@ export const getUserTransactionStatus = async (bookId: number, userId: string | 
         count: sql<number>`count(*)`,
       })
       .from(transactions)
-      .where(and(eq(transactions.userId, userId), eq(transactions.status, "BORROWED")));
+      .where(and(eq(transactions.userId, userId), eq(transactions.status, "accepted")));
 
     const totalBorrowed = Number(activeBorrows[0].count);
     const status = bookStatus[0]?.status;
 
     // Match the exact status strings from the database
     return {
-      borrowed: status === "BORROWED",
+      borrowed: status === "accepted",
       requested: status === "REQUESTED",
       totalBorrowed,
     };
   } catch (error) {
     console.error("getUserTransactionStatus Error:", error);
     return { borrowed: false, requested: false, totalBorrowed: 0 };
+  }
+};
+
+export const getAcceptedTransaction = async (userId: string, bookId: number) => {
+  try {
+    const transaction = await db
+      .select()
+      .from(transactions)
+      .innerJoin(physicalBooks, eq(transactions.physicalBookId, physicalBooks.pid))
+      .where(
+        and(
+          eq(transactions.userId, userId),
+          eq(physicalBooks.bookId, bookId),
+          eq(transactions.status, "accepted") // Case-sensitive match
+        )
+      )
+      .limit(1);
+
+    return transaction[0] || null;
+  } catch (error) {
+    console.error("Error fetching accepted transaction:", error);
+    throw error;
   }
 };
