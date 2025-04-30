@@ -1,9 +1,7 @@
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/neon-http";
 import { physicalBooks, transactions } from "../schema";
 import { and, eq, sql } from "drizzle-orm";
-
-const db = drizzle(process.env.DATABASE_URL!);
+import { db } from "@/db";
 
 export const createTransactions = async (physicalBookId: number, userId: string, adminId: string, status: string, borrowedDate: any, returnedDate: string | undefined) => {
   const transaction: typeof transactions.$inferInsert = {
@@ -22,16 +20,43 @@ export const createTransactions = async (physicalBookId: number, userId: string,
   }
 };
 
-export const readTransactions = async () => {
+export async function readTransactions() {
   try {
-    const res = await db.select().from(transactions);
-    console.log("readTransactions:", res);
-
-    return res;
+    const result = await db.select().from(transactions);
+    return result;
   } catch (error) {
-    console.log("Something Went Wrong :", error);
+    console.error("Error reading transactions:", error);
+    return null;
   }
-};
+}
+
+export async function readTransactionById(id: number) {
+  try {
+    const result = await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.tid, id))
+      .limit(1);
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error reading transaction:", error);
+    return null;
+  }
+}
+
+export async function updateTransactionStatus(id: number, status: string) {
+  try {
+    const result = await db
+      .update(transactions)
+      .set({ status })
+      .where(eq(transactions.tid, id))
+      .returning();
+    return result[0] || null;
+  } catch (error) {
+    console.error("Error updating transaction:", error);
+    return null;
+  }
+}
 
 export const updateTransactions = async (tid: number, status: string, adminId: string) => {
   try {
@@ -84,6 +109,11 @@ export const deleteTransactions = async (tid: number) => {
 
 export const getUserTransactionStatus = async (bookId: number, userId: string | undefined) => {
   try {
+    // Return early if userId is undefined
+    if (!userId) {
+      return { borrowed: false, requested: false, totalBorrowed: 0 };
+    }
+
     // Check if user has any active transaction (BORROWED or REQUESTED) for any physical copy of this book
     const bookStatus = await db
       .select({
